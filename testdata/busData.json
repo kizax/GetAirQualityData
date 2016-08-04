@@ -1,0 +1,28 @@
+{
+	"EssentialInfo" : {
+		"Location" : {
+			"name" : "臺北市",
+			"CenterName" : "臺北市動態資訊中心"
+		},
+		"UpdateTime" : "2016-02-02 14:49:41",
+		"CoordinateSystem" : "WGS84"
+	},
+	"BusInfo" : [{
+			"ProviderID" : 1100.0,
+			"StationID" : 11150.0,
+			"BusID" : "337-FP",
+			"CarType" : "1",
+			"CarID" : 222233738.0,
+			"DutyStatus" : "1",
+			"BusStatus" : "0",
+			"RouteID" : 111520.0,
+			"GoBack" : "0",
+			"Longitude" : 121.557663,
+			"Latitude" : 25.042852,
+			"Speed" : 1.020452,
+			"Azimuth" : 174.100006,
+			"DataTime" : "\/Date(1454395768000+0800)\/"
+		}
+
+	]
+}

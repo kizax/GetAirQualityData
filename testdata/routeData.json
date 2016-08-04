@@ -1,0 +1,49 @@
+{
+	"EssentialInfo" : {
+		"Location" : {
+			"name" : "臺北市",
+			"CenterName" : "臺北市動態資訊中心"
+		},
+		"UpdateTime" : "2016-02-03 14:53:35",
+		"CoordinateSystem" : "WGS84"
+	},
+	"BusInfo" : [{
+			"Id" : 10462.0,
+			"providerId" : 400.0,
+			"providerName" : "三重客運",
+			"nameZh" : "645副",
+			"nameEn" : "645Sub",
+			"pathAttributeId" : 104620.0,
+			"pathAttributeName" : "645副經三總",
+			"pathAttributeEname" : "645(Sub)",
+			"buildPeriod" : "2",
+			"departureZh" : "中華科技大學",
+			"departureEn" : "China University of Science and Tec.",
+			"destinationZh" : "捷運石牌站",
+			"destinationEn" : "MRT Shipai Sta.",
+			"realSequence" : "21",
+			"distance" : "48.5",
+			"goFirstBusTime" : "0550",
+			"backFirstBusTime" : "0550",
+			"goLastBusTime" : "1800",
+			"backLastBusTime" : "1800",
+			"peakHeadway" : null,
+			"offPeakHeadway" : null,
+			"busTimeDesc" : "，繞三總內湖站平日0800-1800 假日0800-1200，週六下午、週日及國定假日停駛，",
+			"headwayDesc" : "三總側門進入時段；平日0800-1800；週六0800-1200週六下午、週日及國定假日停駛",
+			"holidayBusTimeDesc" : null,
+			"holidayGoFirstBusTime" : "0730",
+			"holidayBackFirstBusTime" : "0730",
+			"holidayGoLastBustime" : "1100",
+			"holidayBackLastBusTime" : "1100",
+			"holidayPeakHeadway" : null,
+			"holidayOffPeakHeadway" : null,
+			"holidayHeadwayDesc" : null,
+			"segmentBufferZh" : "濱江國中-外雙溪(故宮)",
+			"segmentBufferEn" : "BinJiang  Junior  High  School-Waishuangxi(Gugong)",
+			"ticketPriceDescriptionZh" : "兩段票",
+			"ticketPriceDescriptionEn" : "2 segments",
+			"roadMapUrl" : "http://e-bus.taipei.gov.tw/newmap/Tw/ManualRouteMap?rid=10462"
+		}
+	]
+}

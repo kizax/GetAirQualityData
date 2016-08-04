@@ -1,0 +1,22 @@
+{
+	"EssentialInfo" : {
+		"Location" : {
+			"name" : "臺北市",
+			"CenterName" : "臺北市動態資訊中心"
+		},
+		"UpdateTime" : "2016-02-03 14:54:13",
+		"CoordinateSystem" : "WGS84"
+	},
+	"BusInfo" : [{
+			"id" : 5500.0,
+			"nameZn" : "中興巴士",
+			"nameEn" : null,
+			"email" : null,
+			"phoneInfo" : "02-28826780#118",
+			"stationId" : 15590.0,
+			"stationNameZn" : "泰山站",
+			"stationNameEn" : null,
+			"type" : 0.0
+		}
+	]
+}
