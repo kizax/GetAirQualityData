@@ -6,11 +6,16 @@
 package getopendata;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.io.FileOutputStream;
+import java.io.OutputStream;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
@@ -65,7 +70,12 @@ public class GetOpenDataTask implements Callable<Boolean> {
             if (!csvDataFile.getParentFile().exists()) {
                 csvDataFile.getParentFile().mkdirs();
             }
-            FileWriter csvFileWriter = new FileWriter(csvDataFile, true);
+            FileWriter csvFileWriter
+                    = new FileWriter(csvDataFile, true);
+            
+            //寫入檔頭BOM，避免EXCEL開啟變成亂碼
+            byte[] bom = new byte[]{(byte) 0xEF, (byte) 0xBB, (byte) 0xBF};
+            csvFileWriter.write(new String(bom));
 
             //寫入紀錄檔
             for (AirQualityData airQualityData : airQualityDataList) {
