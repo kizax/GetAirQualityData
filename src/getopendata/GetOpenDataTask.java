@@ -36,13 +36,14 @@ public class GetOpenDataTask implements Callable<Boolean> {
 
     private final String csvFileName = "./record/airQualityData.csv";
     private final FileWriter logFileWriter;
-    private final int limit = 1000;
+    private final int limit;
     private int offset;
     private Map itemMap;
     private Date specificDate;
 
-    public GetOpenDataTask(FileWriter logFileWriter, int offset, Map itemMap, Date specificDate) {
+    public GetOpenDataTask(FileWriter logFileWriter, int limit, int offset, Map itemMap, Date specificDate) {
         this.logFileWriter = logFileWriter;
+        this.limit = limit;
         this.offset = offset;
         this.itemMap = itemMap;
         this.specificDate = specificDate;
@@ -55,6 +56,8 @@ public class GetOpenDataTask implements Callable<Boolean> {
 
         try {
             String airQualityDataUrl = String.format(DataLinks.airQualityDataUrl, offset, limit);
+            LogUtils.log(logFileWriter, String.format("%1$s\tairQualityDataUrl: %2$s", TimestampUtils.getTimestampStr(), airQualityDataUrl));
+
             HttpResponse airQualityDataHttpResponse = HttpUtils.httpGet(airQualityDataUrl);
 
             String airQualityDataJsonStr = getStrFromResponse(airQualityDataHttpResponse);
@@ -72,7 +75,7 @@ public class GetOpenDataTask implements Callable<Boolean> {
             }
             FileWriter csvFileWriter
                     = new FileWriter(csvDataFile, true);
-            
+
             //寫入檔頭BOM，避免EXCEL開啟變成亂碼
             byte[] bom = new byte[]{(byte) 0xEF, (byte) 0xBB, (byte) 0xBF};
             csvFileWriter.write(new String(bom));
