@@ -64,11 +64,17 @@ public class GetOpenDataTask implements Runnable {
                 LogUtils.log(logFileWriter, String.format("%1$s\tNum of air quality data: %2$d", TimestampUtils.getTimestampStr(), airQualityDataList.size()));
 
                 //看看是否已有紀錄，若還沒有，則放入airQualityDataMap
+                int puttingCount = 0;
                 for (AirQualityData airQualityData : airQualityDataList) {
-                    if (!airQualityDataMap.containsKey(airQualityData.getSiteId() + "," + airQualityData.getItemId())) {
+                    if (itemMap.containsKey(airQualityData.getItemId())
+                            && airQualityData.getMonitorDateStr().equals(TimestampUtils.dateToStr(specificDate))
+                            && !airQualityDataMap.containsKey(airQualityData.getSiteId() + "," + airQualityData.getItemId())) {
                         airQualityDataMap.put(airQualityData.getSiteId() + "," + airQualityData.getItemId(), airQualityData);
+
+                        puttingCount++;
                     }
                 }
+                LogUtils.log(logFileWriter, String.format("%1$s\tPut %2$d data into airQualityDataMap", TimestampUtils.getTimestampStr(), puttingCount));
 
                 //判斷是否所有紀錄都是該日期的紀錄
                 boolean areAllDataInSpecificDate = true;
@@ -101,15 +107,13 @@ public class GetOpenDataTask implements Runnable {
             csvFileWriter.write(new String(bom));
 
             //寫入紀錄檔
-
             int writingCount = 0;
             for (AirQualityData airQualityData : airQualityDataMap.values()) {
-                if (itemMap.containsKey(airQualityData.getItemId())
-                        && airQualityData.getMonitorDateStr().equals(TimestampUtils.dateToStr(specificDate))) {
-                    writeCsvFile(csvFileWriter, airQualityData.getRecordStr());
-                    
-                    writingCount++;
-                }
+
+                writeCsvFile(csvFileWriter, airQualityData.getRecordStr());
+
+                writingCount++;
+
             }
 
             LogUtils.log(logFileWriter, String.format("%1$s\tSuccessfully writing %2$d data into record file", TimestampUtils.getTimestampStr(), writingCount));
