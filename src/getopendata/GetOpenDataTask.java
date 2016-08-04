@@ -84,11 +84,19 @@ public class GetOpenDataTask implements Runnable {
                     }
                 }
 
-                if (!areAllDataInSpecificDate) {
+                if (puttingCount == 0 && offset != 2000) {
+                    //根本沒抓到東西，再跑一次
+                    int minute = 10;
+                    LogUtils.log(logFileWriter, String.format("%1$s\tCold down %2$d minutes and recatch", TimestampUtils.getTimestampStr(), minute));
+                    Thread.sleep(minute * 60 * 1000);
+                }
+                if (puttingCount == 0 && offset == 2000) {
                     break;
-                } else {
+                }
+                if (puttingCount != 0) {
                     offset += limit;
                 }
+
             }
 
             //建立紀錄檔
@@ -133,6 +141,8 @@ public class GetOpenDataTask implements Runnable {
         } catch (JSONException ex) {
             Logger.getLogger(GetOpenDataTask.class.getName()).log(Level.SEVERE, null, ex);
             LogUtils.log(logFileWriter, String.format("%1$s\t%2$s", TimestampUtils.getTimestampStr(), ex));
+        } catch (InterruptedException ex) {
+            Logger.getLogger(GetOpenDataTask.class.getName()).log(Level.SEVERE, null, ex);
         }
 
     }
