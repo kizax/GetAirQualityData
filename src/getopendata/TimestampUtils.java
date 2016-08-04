@@ -21,8 +21,8 @@ public class TimestampUtils {
         return timestampStr;
     }
     
-        public static String dateToStr(Date date) {
-        SimpleDateFormat timestampFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"); //2016-01-15 00:00:00
+    public static String dateToStr(Date date) {
+        SimpleDateFormat timestampFormat = new SimpleDateFormat("yyyy/M/d"); //2016/1/15
         String timestampStr = timestampFormat.format(date);
 
         return timestampStr;

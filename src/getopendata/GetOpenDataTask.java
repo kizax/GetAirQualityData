@@ -13,11 +13,11 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Map;
-import java.util.TimerTask;
+import java.util.concurrent.Callable;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.zip.GZIPInputStream;
 import javax.xml.parsers.ParserConfigurationException;
 import org.apache.http.HttpResponse;
 import org.json.JSONException;
@@ -27,24 +27,26 @@ import org.xml.sax.SAXException;
  *
  * @author kizax
  */
-public class GetOpenDataTask implements Runnable {
+public class GetOpenDataTask implements Callable<Boolean> {
 
     private final String csvFileName = "./record/airQualityData.csv";
     private final FileWriter logFileWriter;
     private final int limit = 1000;
     private int offset;
     private Map itemMap;
+    private Date specificDate;
 
-    public GetOpenDataTask(FileWriter logFileWriter, int offset, Map itemMap) {
+    public GetOpenDataTask(FileWriter logFileWriter, int offset, Map itemMap, Date specificDate) {
         this.logFileWriter = logFileWriter;
         this.offset = offset;
         this.itemMap = itemMap;
+        this.specificDate = specificDate;
     }
 
     @Override
-    public void run() {
+    public Boolean call() throws Exception {
 
-        LogUtils.log(logFileWriter, String.format("%1$s\tBus data is downloading now.", TimestampUtils.getTimestampStr()));
+        LogUtils.log(logFileWriter, String.format("%1$s\tBus data is downloading now, offset %2$d, limit %3$d.", TimestampUtils.getTimestampStr(), offset, limit));
 
         try {
             String airQualityDataUrl = String.format(DataLinks.airQualityDataUrl, offset, limit);
@@ -67,12 +69,23 @@ public class GetOpenDataTask implements Runnable {
 
             //寫入紀錄檔
             for (AirQualityData airQualityData : airQualityDataList) {
-                if (itemMap.containsKey(airQualityData.getItemId())) {
+                if (itemMap.containsKey(airQualityData.getItemId())
+                        && airQualityData.getMonitorDateStr().equals(TimestampUtils.dateToStr(specificDate))) {
                     writeCsvFile(csvFileWriter, airQualityData.getRecordStr());
                 }
             }
 
             LogUtils.log(logFileWriter, String.format("%1$s\tSuccessfully writing data into record file", TimestampUtils.getTimestampStr()));
+
+            //判斷是否所有紀錄都是該日期的紀錄
+            boolean areAllDataInSpecificDate = true;
+            for (AirQualityData airQualityData : airQualityDataList) {
+                if (!airQualityData.getMonitorDateStr().equals(TimestampUtils.dateToStr(specificDate))) {
+                    areAllDataInSpecificDate = false;
+                }
+            }
+
+            return areAllDataInSpecificDate;
 
         } catch (IOException ex) {
             Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
@@ -91,6 +104,7 @@ public class GetOpenDataTask implements Runnable {
             LogUtils.log(logFileWriter, String.format("%1$s\t%2$s", TimestampUtils.getTimestampStr(), ex));
         }
 
+        return false;
     }
 
     private void writeCsvFile(FileWriter csvFileWriter, String record) {
