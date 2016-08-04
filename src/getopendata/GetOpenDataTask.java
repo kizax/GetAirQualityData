@@ -6,21 +6,16 @@
 package getopendata;
 
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.io.FileOutputStream;
-import java.io.OutputStream;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.Callable;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.xml.parsers.ParserConfigurationException;
@@ -32,38 +27,63 @@ import org.xml.sax.SAXException;
  *
  * @author kizax
  */
-public class GetOpenDataTask implements Callable<Boolean> {
+public class GetOpenDataTask implements Runnable {
 
     private final String csvFileName = "./record/airQualityData.csv";
     private final FileWriter logFileWriter;
-    private final int limit;
-    private int offset;
     private Map itemMap;
     private Date specificDate;
 
-    public GetOpenDataTask(FileWriter logFileWriter, int limit, int offset, Map itemMap, Date specificDate) {
+    public GetOpenDataTask(FileWriter logFileWriter, Map itemMap, Date specificDate) {
         this.logFileWriter = logFileWriter;
-        this.limit = limit;
-        this.offset = offset;
         this.itemMap = itemMap;
         this.specificDate = specificDate;
     }
 
     @Override
-    public Boolean call() throws Exception {
-
-        LogUtils.log(logFileWriter, String.format("%1$s\tBus data is downloading now, offset %2$d, limit %3$d.", TimestampUtils.getTimestampStr(), offset, limit));
-
+    public void run() {
         try {
-            String airQualityDataUrl = String.format(DataLinks.airQualityDataUrl, offset, limit);
-            LogUtils.log(logFileWriter, String.format("%1$s\tairQualityDataUrl: %2$s", TimestampUtils.getTimestampStr(), airQualityDataUrl));
 
-            HttpResponse airQualityDataHttpResponse = HttpUtils.httpGet(airQualityDataUrl);
+            int offset = 0;
+            int limit = 1000;
 
-            String airQualityDataJsonStr = getStrFromResponse(airQualityDataHttpResponse);
-            ArrayList<AirQualityData> airQualityDataList = AirQualityJsonParser.getAirQualityDataList(airQualityDataJsonStr);
+            Map<String, AirQualityData> airQualityDataMap = new HashMap();
 
-            LogUtils.log(logFileWriter, String.format("%1$s\tNum of air quality data: %2$d", TimestampUtils.getTimestampStr(), airQualityDataList.size()));
+            while (true) {
+
+                LogUtils.log(logFileWriter, String.format("%1$s\tBus data is downloading now, offset %2$d, limit %3$d.", TimestampUtils.getTimestampStr(), offset, limit));
+
+                String airQualityDataUrl = String.format(DataLinks.airQualityDataUrl, offset, limit);
+                LogUtils.log(logFileWriter, String.format("%1$s\tairQualityDataUrl: %2$s", TimestampUtils.getTimestampStr(), airQualityDataUrl));
+
+                HttpResponse airQualityDataHttpResponse = HttpUtils.httpGet(airQualityDataUrl);
+
+                String airQualityDataJsonStr = getStrFromResponse(airQualityDataHttpResponse);
+                ArrayList<AirQualityData> airQualityDataList = AirQualityJsonParser.getAirQualityDataList(airQualityDataJsonStr);
+
+                LogUtils.log(logFileWriter, String.format("%1$s\tNum of air quality data: %2$d", TimestampUtils.getTimestampStr(), airQualityDataList.size()));
+
+                //看看是否已有紀錄，若還沒有，則放入airQualityDataMap
+                for (AirQualityData airQualityData : airQualityDataList) {
+                    if (!airQualityDataMap.containsKey(airQualityData.getSiteId() + "," + airQualityData.getItemId())) {
+                        airQualityDataMap.put(airQualityData.getSiteId() + "," + airQualityData.getItemId(), airQualityData);
+                    }
+                }
+
+                //判斷是否所有紀錄都是該日期的紀錄
+                boolean areAllDataInSpecificDate = true;
+                for (AirQualityData airQualityData : airQualityDataList) {
+                    if (!airQualityData.getMonitorDateStr().equals(TimestampUtils.dateToStr(specificDate))) {
+                        areAllDataInSpecificDate = false;
+                    }
+                }
+
+                if (!areAllDataInSpecificDate) {
+                    break;
+                } else {
+                    offset += limit;
+                }
+            }
 
             //建立紀錄檔
             LogUtils.log(logFileWriter, String.format("%1$s\tNow start writing data into file", TimestampUtils.getTimestampStr()));
@@ -81,24 +101,18 @@ public class GetOpenDataTask implements Callable<Boolean> {
             csvFileWriter.write(new String(bom));
 
             //寫入紀錄檔
-            for (AirQualityData airQualityData : airQualityDataList) {
+
+            int writingCount = 0;
+            for (AirQualityData airQualityData : airQualityDataMap.values()) {
                 if (itemMap.containsKey(airQualityData.getItemId())
                         && airQualityData.getMonitorDateStr().equals(TimestampUtils.dateToStr(specificDate))) {
                     writeCsvFile(csvFileWriter, airQualityData.getRecordStr());
+                    
+                    writingCount++;
                 }
             }
 
-            LogUtils.log(logFileWriter, String.format("%1$s\tSuccessfully writing data into record file", TimestampUtils.getTimestampStr()));
-
-            //判斷是否所有紀錄都是該日期的紀錄
-            boolean areAllDataInSpecificDate = true;
-            for (AirQualityData airQualityData : airQualityDataList) {
-                if (!airQualityData.getMonitorDateStr().equals(TimestampUtils.dateToStr(specificDate))) {
-                    areAllDataInSpecificDate = false;
-                }
-            }
-
-            return areAllDataInSpecificDate;
+            LogUtils.log(logFileWriter, String.format("%1$s\tSuccessfully writing %2$d data into record file", TimestampUtils.getTimestampStr(), writingCount));
 
         } catch (IOException ex) {
             Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
@@ -117,7 +131,6 @@ public class GetOpenDataTask implements Callable<Boolean> {
             LogUtils.log(logFileWriter, String.format("%1$s\t%2$s", TimestampUtils.getTimestampStr(), ex));
         }
 
-        return false;
     }
 
     private void writeCsvFile(FileWriter csvFileWriter, String record) {

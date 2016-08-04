@@ -7,10 +7,8 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
 
 public class Main {
 
@@ -64,28 +62,8 @@ public class Main {
         cal.add(Calendar.DATE, -1);
         Date yesterday = cal.getTime();
 
-        int offset = 0;
-        int limit = 1000;
-
-        while (true) {
-            Future<Boolean> task = service.submit(new GetOpenDataTask(logFileWriter, limit, offset, itemMap, yesterday));
-            try {
-
-                boolean areAllDataInSpecificDate = task.get();
-
-                if (!areAllDataInSpecificDate) {
-                    break;
-                } else {
-                    offset += limit;
-                }
-
-            } catch (final InterruptedException ex) {
-                ex.printStackTrace();
-            } catch (final ExecutionException ex) {
-                ex.printStackTrace();
-            }
-        }
-        service.shutdownNow();
+        Thread getOpenDataTaskThread = new Thread(new GetOpenDataTask(logFileWriter, itemMap, yesterday));
+        getOpenDataTaskThread.start();
 
     }
 }
