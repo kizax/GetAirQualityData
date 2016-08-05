@@ -7,8 +7,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 public class Main {
 
@@ -53,10 +51,6 @@ public class Main {
         itemMap.put(33, "PM2.5");
 
         itemMap.put(38, "RH");
-
-        final ExecutorService service;
-
-        service = Executors.newFixedThreadPool(1);
 
         Calendar cal = Calendar.getInstance();
         cal.add(Calendar.DATE, -1);
