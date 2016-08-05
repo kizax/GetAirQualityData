@@ -27,11 +27,7 @@ public class AirQualityJsonParser {
 
         ArrayList<AirQualityData> airQualityDataList = new ArrayList<>();
 
-        JSONObject jsonObj = new JSONObject(jsonStr);
-
-        JSONObject resultObj = jsonObj.getJSONObject("result");
-
-        JSONArray airQualityJsonArray = resultObj.getJSONArray("records");
+        JSONArray airQualityJsonArray = new JSONArray(jsonStr);
 
         for (int i = 0; i < airQualityJsonArray.length(); i++) {
             JSONObject airQualityObj = (JSONObject) airQualityJsonArray.get(i);

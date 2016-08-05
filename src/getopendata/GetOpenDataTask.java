@@ -86,7 +86,7 @@ public class GetOpenDataTask implements Runnable {
 
                 if (puttingCount == 0 && offset != 2000) {
                     //根本沒抓到東西，再跑一次
-                    int minute = 10;
+                    int minute = 1;
                     LogUtils.log(logFileWriter, String.format("%1$s\tCold down %2$d minutes and recatch", TimestampUtils.getTimestampStr(), minute));
                     Thread.sleep(minute * 60 * 1000);
                 }
