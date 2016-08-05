@@ -14,6 +14,8 @@ import java.util.Date;
  */
 public class AirQualityData {
 
+    public static final String NOT_SET = "";
+
     private int siteId;
     private String siteName;
     private int itemId;
@@ -89,6 +91,43 @@ public class AirQualityData {
 
     }
 
+    public AirQualityData(int siteId, String siteName, int itemId,
+            String itemEngName, Date monitorDate) {
+
+        this.siteId = siteId;
+        this.siteName = siteName;
+        this.itemId = itemId;
+        this.itemName = "";
+        this.itemEngName = itemEngName;
+        this.itemUnit = "";
+        this.monitorDate = monitorDate;
+        this.monitorValue00 = NOT_SET;
+        this.monitorValue01 = NOT_SET;
+        this.monitorValue02 = NOT_SET;
+        this.monitorValue03 = NOT_SET;
+        this.monitorValue04 = NOT_SET;
+        this.monitorValue05 = NOT_SET;
+        this.monitorValue06 = NOT_SET;
+        this.monitorValue07 = NOT_SET;
+        this.monitorValue08 = NOT_SET;
+        this.monitorValue09 = NOT_SET;
+        this.monitorValue10 = NOT_SET;
+        this.monitorValue11 = NOT_SET;
+        this.monitorValue12 = NOT_SET;
+        this.monitorValue13 = NOT_SET;
+        this.monitorValue14 = NOT_SET;
+        this.monitorValue15 = NOT_SET;
+        this.monitorValue16 = NOT_SET;
+        this.monitorValue17 = NOT_SET;
+        this.monitorValue18 = NOT_SET;
+        this.monitorValue19 = NOT_SET;
+        this.monitorValue20 = NOT_SET;
+        this.monitorValue21 = NOT_SET;
+        this.monitorValue22 = NOT_SET;
+        this.monitorValue23 = NOT_SET;
+
+    }
+
     @Override
     public String toString() {
         String vdDataStr = String.format("%1$d, %2$s, %3$d, %4$s, %5$s, %6$s, %7$s, %8$s, %9$s, %10$s, %11$s, %12$s, %13$s, %14$s, %15$s, %16$s, %17$s, %18$s, %19$s, %20$s, %21$s, %22$s, %23$s, %24$s, %25$s, %26$s, %27$s, %28$s, %29$s, %30$s, %31$s", getSiteId(), getSiteName(), getItemId(), getItemName(), getItemEngName(), getItemUnit(), getMonitorDateStr(), getMonitorValue00(), getMonitorValue01(), getMonitorValue02(), getMonitorValue03(), getMonitorValue04(), getMonitorValue05(), getMonitorValue06(), getMonitorValue07(), getMonitorValue08(), getMonitorValue09(), getMonitorValue10(), getMonitorValue11(), getMonitorValue12(), getMonitorValue13(), getMonitorValue14(), getMonitorValue15(), getMonitorValue16(), getMonitorValue17(), getMonitorValue18(), getMonitorValue19(), getMonitorValue20(), getMonitorValue21(), getMonitorValue22(), getMonitorValue23());
@@ -97,7 +136,7 @@ public class AirQualityData {
 
     public String getRecordStr() {
         String recordStr = String.format("%1$s, %2$s, %3$s, %4$s, %5$s, %6$s, %7$s, %8$s, %9$s, %10$s, %11$s, %12$s, %13$s, %14$s, %15$s, %16$s, %17$s, %18$s, %19$s, %20$s, %21$s, %22$s, %23$s, %24$s, %25$s, %26$s, %27$s",
-                getSiteId()+", "+getSiteName(), getMonitorDateStr(), getItemEngName(),
+                getSiteId() + ", " + getSiteName(), getMonitorDateStr(), getItemEngName(),
                 getMonitorValue00(), getMonitorValue01(), getMonitorValue02(), getMonitorValue03(),
                 getMonitorValue04(), getMonitorValue05(), getMonitorValue06(), getMonitorValue07(),
                 getMonitorValue08(), getMonitorValue09(), getMonitorValue10(), getMonitorValue11(),

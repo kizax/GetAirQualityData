@@ -11,7 +11,9 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.text.DateFormat;
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -31,12 +33,14 @@ public class GetOpenDataTask implements Runnable {
 
     private final String csvFileName = "./record/airQualityData.csv";
     private final FileWriter logFileWriter;
-    private Map itemMap;
+    private Map<Integer, String> itemMap;
+    private Map<Integer, String> siteMap;
     private Date specificDate;
 
-    public GetOpenDataTask(FileWriter logFileWriter, Map itemMap, Date specificDate) {
+    public GetOpenDataTask(FileWriter logFileWriter, Map itemMap, Map siteMap, Date specificDate) {
         this.logFileWriter = logFileWriter;
         this.itemMap = itemMap;
+        this.siteMap = siteMap;
         this.specificDate = specificDate;
     }
 
@@ -98,6 +102,23 @@ public class GetOpenDataTask implements Runnable {
                 }
 
             }
+
+            //補值
+                                LogUtils.log(logFileWriter, String.format("%1$s\tNow have %2$d data", TimestampUtils.getTimestampStr(), airQualityDataMap.values().size()));
+            for (int siteId : siteMap.keySet()) {
+                for (int itemId : itemMap.keySet()) {
+                    if (!airQualityDataMap.containsKey(siteId + "," + itemId)) {
+
+                        String dataTimeStr = TimestampUtils.dateToStr(new Date());
+                        DateFormat dataFromat = new SimpleDateFormat("yyyy/M/d");
+                        Date monitorDate = dataFromat.parse(dataTimeStr);
+                        AirQualityData dummyAirQualityData = new AirQualityData(siteId, siteMap.get(siteId), itemId, itemMap.get(itemId), monitorDate);
+
+                        airQualityDataMap.put(siteId + "," + itemId, dummyAirQualityData);
+                    }
+                }
+            }
+             LogUtils.log(logFileWriter, String.format("%1$s\tAfter filling up with dummy data, now have %2$d data", TimestampUtils.getTimestampStr(), airQualityDataMap.values().size()));
 
             //建立紀錄檔
             LogUtils.log(logFileWriter, String.format("%1$s\tNow start writing data into file", TimestampUtils.getTimestampStr()));
