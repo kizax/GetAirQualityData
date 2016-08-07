@@ -1,1 +1,1 @@
-java -Dfile.encoding=UTF8 -jar "GetAirQualityData.jar"
+java -Dfile.encoding=UTF8 -jar "D:\github\GetAirQualityData\dist\GetAirQualityData.jar"
