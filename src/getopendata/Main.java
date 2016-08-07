@@ -10,9 +10,16 @@ import java.util.Map;
 
 public class Main {
 
-    private static final String logFileName = "./record/log.txt";
-
     public static void main(String[] args) {
+
+        String folderPath = ".";
+        try {
+            folderPath = args[0];
+        } catch (ArrayIndexOutOfBoundsException e) {
+        }
+
+        String resultCsvFileName = folderPath + "/record/airQualityData.csv";
+        String logFileName = folderPath + "/record/log.txt";
 
         //建立log file
         File logFile = new File(logFileName);
@@ -131,13 +138,12 @@ public class Main {
         siteMap.put(80, "關山");
         siteMap.put(83, "麥寮");
 
-
         //執行 getOpenDataTask
         Calendar calendar = Calendar.getInstance();
         calendar.add(Calendar.DATE, -1);
         Date yesterday = calendar.getTime();
 
-        Thread getOpenDataTaskThread = new Thread(new GetOpenDataTask(logFileWriter, itemMap, siteMap, yesterday));
+        Thread getOpenDataTaskThread = new Thread(new GetOpenDataTask(resultCsvFileName, logFileWriter, itemMap, siteMap, yesterday));
         getOpenDataTaskThread.start();
 
     }

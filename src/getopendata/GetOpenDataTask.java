@@ -31,13 +31,14 @@ import org.xml.sax.SAXException;
  */
 public class GetOpenDataTask implements Runnable {
 
-    private final String csvFileName = "./record/airQualityData.csv";
+    private final String csvFileName;
     private final FileWriter logFileWriter;
     private Map<Integer, String> itemMap;
     private Map<Integer, String> siteMap;
     private Date specificDate;
 
-    public GetOpenDataTask(FileWriter logFileWriter, Map itemMap, Map siteMap, Date specificDate) {
+    public GetOpenDataTask(String resultCsvFileName,FileWriter logFileWriter, Map itemMap, Map siteMap, Date specificDate) {
+        this. csvFileName = resultCsvFileName;
         this.logFileWriter = logFileWriter;
         this.itemMap = itemMap;
         this.siteMap = siteMap;
