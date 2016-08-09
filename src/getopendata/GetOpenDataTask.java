@@ -15,6 +15,7 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -37,8 +38,8 @@ public class GetOpenDataTask implements Runnable {
     private Map<Integer, String> siteMap;
     private Date specificDate;
 
-    public GetOpenDataTask(String resultCsvFileName,FileWriter logFileWriter, Map itemMap, Map siteMap, Date specificDate) {
-        this. csvFileName = resultCsvFileName;
+    public GetOpenDataTask(String resultCsvFileName, FileWriter logFileWriter, Map itemMap, Map siteMap, Date specificDate) {
+        this.csvFileName = resultCsvFileName;
         this.logFileWriter = logFileWriter;
         this.itemMap = itemMap;
         this.siteMap = siteMap;
@@ -110,7 +111,12 @@ public class GetOpenDataTask implements Runnable {
                 for (int itemId : itemMap.keySet()) {
                     if (!airQualityDataMap.containsKey(siteId + "," + itemId)) {
 
-                        String dataTimeStr = TimestampUtils.dateToStr(new Date());
+                        Calendar yesterdayCalendar = Calendar.getInstance();
+                        yesterdayCalendar.setTime(new Date());
+                        yesterdayCalendar.add(Calendar.DATE, -1);
+                        Date yesterday = yesterdayCalendar.getTime();
+
+                        String dataTimeStr = TimestampUtils.dateToStr(yesterday);
                         DateFormat dataFromat = new SimpleDateFormat("yyyy/M/d");
                         Date monitorDate = dataFromat.parse(dataTimeStr);
                         AirQualityData dummyAirQualityData = new AirQualityData(siteId, siteMap.get(siteId), itemId, itemMap.get(itemId), monitorDate);
