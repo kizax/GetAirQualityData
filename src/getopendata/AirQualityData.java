@@ -142,7 +142,7 @@ public class AirQualityData {
                 + "%16$s,%17$s,%18$s,%19$s,"
                 + "%20$s,%21$s,%22$s,%23$s,"
                 + "%24$s,%25$s,%26$s,%27$s",
-                getSiteId() + ", " + getSiteName(), getMonitorDateStr(), getItemEngName(),
+                getSiteName(), getMonitorDateStr(), getItemEngName(),
                 getMonitorValue00(), getMonitorValue01(), getMonitorValue02(), getMonitorValue03(),
                 getMonitorValue04(), getMonitorValue05(), getMonitorValue06(), getMonitorValue07(),
                 getMonitorValue08(), getMonitorValue09(), getMonitorValue10(), getMonitorValue11(),
