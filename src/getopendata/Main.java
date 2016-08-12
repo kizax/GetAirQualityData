@@ -139,11 +139,21 @@ public class Main {
         siteMap.put(83, "麥寮");
 
         //執行 getOpenDataTask
-        Calendar calendar = Calendar.getInstance();
-        calendar.add(Calendar.DATE, -1);
-        Date yesterday = calendar.getTime();
+        int dateBefore = -1;
+        try {
+            dateBefore = -Integer.valueOf(args[1]);
+        } catch (ArrayIndexOutOfBoundsException e) {
+        }
 
-        Thread getOpenDataTaskThread = new Thread(new GetOpenDataTask(resultCsvFileName, logFileWriter, itemMap, siteMap, yesterday));
+        Calendar calendar = Calendar.getInstance();
+        calendar.add(Calendar.DATE, dateBefore);
+        calendar.set(Calendar.HOUR_OF_DAY, 0);
+        calendar.set(Calendar.MINUTE, 0);
+        calendar.set(Calendar.SECOND, 0);
+        calendar.set( Calendar.MILLISECOND, 0 );
+        Date specificDate = calendar.getTime();
+
+        Thread getOpenDataTaskThread = new Thread(new GetOpenDataTask(resultCsvFileName, logFileWriter, itemMap, siteMap, specificDate));
         getOpenDataTaskThread.start();
 
     }

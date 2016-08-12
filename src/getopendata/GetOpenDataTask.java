@@ -53,6 +53,8 @@ public class GetOpenDataTask implements Runnable {
             int offset = 0;
             int limit = 1000;
 
+            LogUtils.log(logFileWriter, String.format("%1$s\tTarget date: %2$s", TimestampUtils.getTimestampStr(), TimestampUtils.dateToStr(specificDate)));
+
             Map<String, AirQualityData> airQualityDataMap = new HashMap();
 
             while (true) {
@@ -82,25 +84,14 @@ public class GetOpenDataTask implements Runnable {
                 }
                 LogUtils.log(logFileWriter, String.format("%1$s\tPut %2$d data into airQualityDataMap", TimestampUtils.getTimestampStr(), puttingCount));
 
-                //判斷是否所有紀錄都是該日期的紀錄
-                boolean areAllDataInSpecificDate = true;
-                for (AirQualityData airQualityData : airQualityDataList) {
-                    if (!airQualityData.getMonitorDateStr().equals(TimestampUtils.dateToStr(specificDate))) {
-                        areAllDataInSpecificDate = false;
-                    }
-                }
-
-                if (puttingCount == 0 && offset != 2000) {
-                    //根本沒抓到東西，再跑一次
-                    int minute = 1;
-                    LogUtils.log(logFileWriter, String.format("%1$s\tCold down %2$d minutes and recatch", TimestampUtils.getTimestampStr(), minute));
-                    Thread.sleep(minute * 60 * 1000);
-                }
-                if (puttingCount == 0 && offset == 2000) {
+                AirQualityData lastAirQualityData = airQualityDataList.get(airQualityDataList.size() - 1);
+                LogUtils.log(logFileWriter, String.format("%1$s\tLast data's date is  %2$s", TimestampUtils.getTimestampStr(), lastAirQualityData.getMonitorDateStr()));
+                if (lastAirQualityData.getMonitorDate().before(specificDate)) {
+                    LogUtils.log(logFileWriter, String.format("%1$s\tStop catching data", TimestampUtils.getTimestampStr()));
                     break;
-                }
-                if (puttingCount != 0) {
+                } else {
                     offset += limit;
+                    LogUtils.log(logFileWriter, String.format("%1$s\tContinually catch data", TimestampUtils.getTimestampStr()));
                 }
 
             }
@@ -111,12 +102,7 @@ public class GetOpenDataTask implements Runnable {
                 for (int itemId : itemMap.keySet()) {
                     if (!airQualityDataMap.containsKey(siteId + "," + itemId)) {
 
-                        Calendar yesterdayCalendar = Calendar.getInstance();
-                        yesterdayCalendar.setTime(new Date());
-                        yesterdayCalendar.add(Calendar.DATE, -1);
-                        Date yesterday = yesterdayCalendar.getTime();
-
-                        String dataTimeStr = TimestampUtils.dateToStr(yesterday);
+                        String dataTimeStr = TimestampUtils.dateToStr(specificDate);
                         DateFormat dataFromat = new SimpleDateFormat("yyyy/M/d");
                         Date monitorDate = dataFromat.parse(dataTimeStr);
                         AirQualityData dummyAirQualityData = new AirQualityData(siteId, siteMap.get(siteId), itemId, itemMap.get(itemId), monitorDate);
@@ -169,8 +155,6 @@ public class GetOpenDataTask implements Runnable {
         } catch (JSONException ex) {
             Logger.getLogger(GetOpenDataTask.class.getName()).log(Level.SEVERE, null, ex);
             LogUtils.log(logFileWriter, String.format("%1$s\t%2$s", TimestampUtils.getTimestampStr(), ex));
-        } catch (InterruptedException ex) {
-            Logger.getLogger(GetOpenDataTask.class.getName()).log(Level.SEVERE, null, ex);
         }
 
     }
