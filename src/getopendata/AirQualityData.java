@@ -14,6 +14,8 @@ import java.util.Date;
  */
 public class AirQualityData {
 
+    public static final String NOT_SET = "";
+
     private int siteId;
     private String siteName;
     private int itemId;
@@ -89,21 +91,78 @@ public class AirQualityData {
 
     }
 
+    public AirQualityData(int siteId, String siteName, int itemId,
+            String itemEngName, Date monitorDate) {
+
+        this.siteId = siteId;
+        this.siteName = siteName;
+        this.itemId = itemId;
+        this.itemName = "";
+        this.itemEngName = itemEngName;
+        this.itemUnit = "";
+        this.monitorDate = monitorDate;
+        this.monitorValue00 = NOT_SET;
+        this.monitorValue01 = NOT_SET;
+        this.monitorValue02 = NOT_SET;
+        this.monitorValue03 = NOT_SET;
+        this.monitorValue04 = NOT_SET;
+        this.monitorValue05 = NOT_SET;
+        this.monitorValue06 = NOT_SET;
+        this.monitorValue07 = NOT_SET;
+        this.monitorValue08 = NOT_SET;
+        this.monitorValue09 = NOT_SET;
+        this.monitorValue10 = NOT_SET;
+        this.monitorValue11 = NOT_SET;
+        this.monitorValue12 = NOT_SET;
+        this.monitorValue13 = NOT_SET;
+        this.monitorValue14 = NOT_SET;
+        this.monitorValue15 = NOT_SET;
+        this.monitorValue16 = NOT_SET;
+        this.monitorValue17 = NOT_SET;
+        this.monitorValue18 = NOT_SET;
+        this.monitorValue19 = NOT_SET;
+        this.monitorValue20 = NOT_SET;
+        this.monitorValue21 = NOT_SET;
+        this.monitorValue22 = NOT_SET;
+        this.monitorValue23 = NOT_SET;
+
+    }
+
     @Override
     public String toString() {
-        String vdDataStr = String.format("%1$d, %2$s, %3$d, %4$s, %5$s, %6$s, %7$s, %8$s, %9$s, %10$s, %11$s, %12$s, %13$s, %14$s, %15$s, %16$s, %17$s, %18$s, %19$s, %20$s, %21$s, %22$s, %23$s, %24$s, %25$s, %26$s, %27$s, %28$s, %29$s, %30$s, %31$s", getSiteId(), getSiteName(), getItemId(), getItemName(), getItemEngName(), getItemUnit(), getMonitorDateStr(), getMonitorValue00(), getMonitorValue01(), getMonitorValue02(), getMonitorValue03(), getMonitorValue04(), getMonitorValue05(), getMonitorValue06(), getMonitorValue07(), getMonitorValue08(), getMonitorValue09(), getMonitorValue10(), getMonitorValue11(), getMonitorValue12(), getMonitorValue13(), getMonitorValue14(), getMonitorValue15(), getMonitorValue16(), getMonitorValue17(), getMonitorValue18(), getMonitorValue19(), getMonitorValue20(), getMonitorValue21(), getMonitorValue22(), getMonitorValue23());
+        String vdDataStr = String.format("%1$d, %2$s, %3$d, %4$s, %5$s, %6$s, %7$s, "
+                + "%8$s, %9$s, %10$s, %11$s, "
+                + "%12$s, %13$s, %14$s, %15$s, "
+                + "%16$s, %17$s, %18$s, %19$s, "
+                + "%20$s, %21$s, %22$s, %23$s, "
+                + "%24$s, %25$s, %26$s, %27$s, "
+                + "%28$s, %29$s, %30$s, %31$s", 
+                getSiteId(), getSiteName(), getItemId(), getItemName(), getItemEngName(), 
+                getItemUnit(), getMonitorDateStr(), 
+                monitorValue00, monitorValue01, monitorValue02, monitorValue03,
+                monitorValue04, monitorValue05, monitorValue06, monitorValue07,
+                monitorValue08, monitorValue09, monitorValue10, monitorValue11,
+                monitorValue12, monitorValue13, monitorValue14, monitorValue15,
+                monitorValue16, monitorValue17, monitorValue18, monitorValue19,
+                monitorValue20, monitorValue21, monitorValue22, monitorValue23);
         return vdDataStr;
     }
 
     public String getRecordStr() {
-        String recordStr = String.format("%1$s, %2$s, %3$s, %4$s, %5$s, %6$s, %7$s, %8$s, %9$s, %10$s, %11$s, %12$s, %13$s, %14$s, %15$s, %16$s, %17$s, %18$s, %19$s, %20$s, %21$s, %22$s, %23$s, %24$s, %25$s, %26$s, %27$s",
-                getSiteId()+", "+getSiteName(), getMonitorDateStr(), getItemEngName(),
-                getMonitorValue00(), getMonitorValue01(), getMonitorValue02(), getMonitorValue03(),
-                getMonitorValue04(), getMonitorValue05(), getMonitorValue06(), getMonitorValue07(),
-                getMonitorValue08(), getMonitorValue09(), getMonitorValue10(), getMonitorValue11(),
-                getMonitorValue12(), getMonitorValue13(), getMonitorValue14(), getMonitorValue15(),
-                getMonitorValue16(), getMonitorValue17(), getMonitorValue18(), getMonitorValue19(),
-                getMonitorValue20(), getMonitorValue21(), getMonitorValue22(), getMonitorValue23());
+        String recordStr = String.format("%1$s,%2$s,%3$s,"
+                + "%4$s,%5$s,%6$s,%7$s,"
+                + "%8$s,%9$s,%10$s,%11$s,"
+                + "%12$s,%13$s,%14$s,%15$s,"
+                + "%16$s,%17$s,%18$s,%19$s,"
+                + "%20$s,%21$s,%22$s,%23$s,"
+                + "%24$s,%25$s,%26$s,%27$s",
+                getSiteName(), getMonitorDateStr(), getItemEngName(),
+                monitorValue00, monitorValue01, monitorValue02, monitorValue03,
+                monitorValue04, monitorValue05, monitorValue06, monitorValue07,
+                monitorValue08, monitorValue09, monitorValue10, monitorValue11,
+                monitorValue12, monitorValue13, monitorValue14, monitorValue15,
+                monitorValue16, monitorValue17, monitorValue18, monitorValue19,
+                monitorValue20, monitorValue21, monitorValue22, monitorValue23);
         return recordStr;
     }
 
@@ -214,337 +273,123 @@ public class AirQualityData {
     /**
      * @return the monitorValue00
      */
-    public String getMonitorValue00() {
-        return monitorValue00;
+    public String getMonitorValue(int index) {
+
+        switch (index) {
+            case 0:
+                return monitorValue00;
+            case 1:
+                return monitorValue01;
+            case 2:
+                return monitorValue02;
+            case 3:
+                return monitorValue03;
+            case 4:
+                return monitorValue04;
+            case 5:
+                return monitorValue05;
+
+            case 6:
+                return monitorValue06;
+            case 7:
+                return monitorValue07;
+            case 8:
+                return monitorValue08;
+            case 9:
+                return monitorValue09;
+            case 10:
+                return monitorValue10;
+
+            case 11:
+                return monitorValue11;
+            case 12:
+                return monitorValue12;
+            case 13:
+                return monitorValue13;
+            case 14:
+                return monitorValue14;
+            case 15:
+                return monitorValue15;
+
+            case 16:
+                return monitorValue16;
+            case 17:
+                return monitorValue17;
+            case 18:
+                return monitorValue18;
+            case 19:
+                return monitorValue19;
+            case 20:
+                return monitorValue20;
+
+            case 21:
+                return monitorValue21;
+            case 22:
+                return monitorValue22;
+            case 23:
+                return monitorValue23;
+        }
+        return null;
     }
 
     /**
-     * @param monitorValue00 the monitorValue00 to set
      */
-    public void setMonitorValue00(String monitorValue00) {
-        this.monitorValue00 = monitorValue00;
-    }
+    public void setMonitorValue(int index, String monitorValue) {
 
-    /**
-     * @return the monitorValue01
-     */
-    public String getMonitorValue01() {
-        return monitorValue01;
-    }
+        switch (index) {
+            case 0:
+                this.monitorValue00 = monitorValue;
+            case 1:
+                this.monitorValue01 = monitorValue;
+            case 2:
+                this.monitorValue02 = monitorValue;
+            case 3:
+                this.monitorValue03 = monitorValue;
+            case 4:
+                this.monitorValue04 = monitorValue;
+            case 5:
+                this.monitorValue05 = monitorValue;
 
-    /**
-     * @param monitorValue01 the monitorValue01 to set
-     */
-    public void setMonitorValue01(String monitorValue01) {
-        this.monitorValue01 = monitorValue01;
-    }
+            case 6:
+                this.monitorValue06 = monitorValue;
+            case 7:
+                this.monitorValue07 = monitorValue;
+            case 8:
+                this.monitorValue08 = monitorValue;
+            case 9:
+                this.monitorValue09 = monitorValue;
+            case 10:
+                this.monitorValue10 = monitorValue;
 
-    /**
-     * @return the monitorValue02
-     */
-    public String getMonitorValue02() {
-        return monitorValue02;
-    }
+            case 11:
+                this.monitorValue11 = monitorValue;
+            case 12:
+                this.monitorValue12 = monitorValue;
+            case 13:
+                this.monitorValue13 = monitorValue;
+            case 14:
+                this.monitorValue14 = monitorValue;
+            case 15:
+                this.monitorValue15 = monitorValue;
 
-    /**
-     * @param monitorValue02 the monitorValue02 to set
-     */
-    public void setMonitorValue02(String monitorValue02) {
-        this.monitorValue02 = monitorValue02;
-    }
+            case 16:
+                this.monitorValue16 = monitorValue;
+            case 17:
+                this.monitorValue17 = monitorValue;
+            case 18:
+                this.monitorValue18 = monitorValue;
+            case 19:
+                this.monitorValue19 = monitorValue;
+            case 20:
+                this.monitorValue20 = monitorValue;
 
-    /**
-     * @return the monitorValue03
-     */
-    public String getMonitorValue03() {
-        return monitorValue03;
-    }
-
-    /**
-     * @param monitorValue03 the monitorValue03 to set
-     */
-    public void setMonitorValue03(String monitorValue03) {
-        this.monitorValue03 = monitorValue03;
-    }
-
-    /**
-     * @return the monitorValue04
-     */
-    public String getMonitorValue04() {
-        return monitorValue04;
-    }
-
-    /**
-     * @param monitorValue04 the monitorValue04 to set
-     */
-    public void setMonitorValue04(String monitorValue04) {
-        this.monitorValue04 = monitorValue04;
-    }
-
-    /**
-     * @return the monitorValue05
-     */
-    public String getMonitorValue05() {
-        return monitorValue05;
-    }
-
-    /**
-     * @param monitorValue05 the monitorValue05 to set
-     */
-    public void setMonitorValue05(String monitorValue05) {
-        this.monitorValue05 = monitorValue05;
-    }
-
-    /**
-     * @return the monitorValue06
-     */
-    public String getMonitorValue06() {
-        return monitorValue06;
-    }
-
-    /**
-     * @param monitorValue06 the monitorValue06 to set
-     */
-    public void setMonitorValue06(String monitorValue06) {
-        this.monitorValue06 = monitorValue06;
-    }
-
-    /**
-     * @return the monitorValue07
-     */
-    public String getMonitorValue07() {
-        return monitorValue07;
-    }
-
-    /**
-     * @param monitorValue07 the monitorValue07 to set
-     */
-    public void setMonitorValue07(String monitorValue07) {
-        this.monitorValue07 = monitorValue07;
-    }
-
-    /**
-     * @return the monitorValue08
-     */
-    public String getMonitorValue08() {
-        return monitorValue08;
-    }
-
-    /**
-     * @param monitorValue08 the monitorValue08 to set
-     */
-    public void setMonitorValue08(String monitorValue08) {
-        this.monitorValue08 = monitorValue08;
-    }
-
-    /**
-     * @return the monitorValue09
-     */
-    public String getMonitorValue09() {
-        return monitorValue09;
-    }
-
-    /**
-     * @param monitorValue09 the monitorValue09 to set
-     */
-    public void setMonitorValue09(String monitorValue09) {
-        this.monitorValue09 = monitorValue09;
-    }
-
-    /**
-     * @return the monitorValue10
-     */
-    public String getMonitorValue10() {
-        return monitorValue10;
-    }
-
-    /**
-     * @param monitorValue10 the monitorValue10 to set
-     */
-    public void setMonitorValue10(String monitorValue10) {
-        this.monitorValue10 = monitorValue10;
-    }
-
-    /**
-     * @return the monitorValue11
-     */
-    public String getMonitorValue11() {
-        return monitorValue11;
-    }
-
-    /**
-     * @param monitorValue11 the monitorValue11 to set
-     */
-    public void setMonitorValue11(String monitorValue11) {
-        this.monitorValue11 = monitorValue11;
-    }
-
-    /**
-     * @return the monitorValue12
-     */
-    public String getMonitorValue12() {
-        return monitorValue12;
-    }
-
-    /**
-     * @param monitorValue12 the monitorValue12 to set
-     */
-    public void setMonitorValue12(String monitorValue12) {
-        this.monitorValue12 = monitorValue12;
-    }
-
-    /**
-     * @return the monitorValue13
-     */
-    public String getMonitorValue13() {
-        return monitorValue13;
-    }
-
-    /**
-     * @param monitorValue13 the monitorValue13 to set
-     */
-    public void setMonitorValue13(String monitorValue13) {
-        this.monitorValue13 = monitorValue13;
-    }
-
-    /**
-     * @return the monitorValue14
-     */
-    public String getMonitorValue14() {
-        return monitorValue14;
-    }
-
-    /**
-     * @param monitorValue14 the monitorValue14 to set
-     */
-    public void setMonitorValue14(String monitorValue14) {
-        this.monitorValue14 = monitorValue14;
-    }
-
-    /**
-     * @return the monitorValue15
-     */
-    public String getMonitorValue15() {
-        return monitorValue15;
-    }
-
-    /**
-     * @param monitorValue15 the monitorValue15 to set
-     */
-    public void setMonitorValue15(String monitorValue15) {
-        this.monitorValue15 = monitorValue15;
-    }
-
-    /**
-     * @return the monitorValue16
-     */
-    public String getMonitorValue16() {
-        return monitorValue16;
-    }
-
-    /**
-     * @param monitorValue16 the monitorValue16 to set
-     */
-    public void setMonitorValue16(String monitorValue16) {
-        this.monitorValue16 = monitorValue16;
-    }
-
-    /**
-     * @return the monitorValue17
-     */
-    public String getMonitorValue17() {
-        return monitorValue17;
-    }
-
-    /**
-     * @param monitorValue17 the monitorValue17 to set
-     */
-    public void setMonitorValue17(String monitorValue17) {
-        this.monitorValue17 = monitorValue17;
-    }
-
-    /**
-     * @return the monitorValue18
-     */
-    public String getMonitorValue18() {
-        return monitorValue18;
-    }
-
-    /**
-     * @param monitorValue18 the monitorValue18 to set
-     */
-    public void setMonitorValue18(String monitorValue18) {
-        this.monitorValue18 = monitorValue18;
-    }
-
-    /**
-     * @return the monitorValue19
-     */
-    public String getMonitorValue19() {
-        return monitorValue19;
-    }
-
-    /**
-     * @param monitorValue19 the monitorValue19 to set
-     */
-    public void setMonitorValue19(String monitorValue19) {
-        this.monitorValue19 = monitorValue19;
-    }
-
-    /**
-     * @return the monitorValue20
-     */
-    public String getMonitorValue20() {
-        return monitorValue20;
-    }
-
-    /**
-     * @param monitorValue20 the monitorValue20 to set
-     */
-    public void setMonitorValue20(String monitorValue20) {
-        this.monitorValue20 = monitorValue20;
-    }
-
-    /**
-     * @return the monitorValue21
-     */
-    public String getMonitorValue21() {
-        return monitorValue21;
-    }
-
-    /**
-     * @param monitorValue21 the monitorValue21 to set
-     */
-    public void setMonitorValue21(String monitorValue21) {
-        this.monitorValue21 = monitorValue21;
-    }
-
-    /**
-     * @return the monitorValue22
-     */
-    public String getMonitorValue22() {
-        return monitorValue22;
-    }
-
-    /**
-     * @param monitorValue22 the monitorValue22 to set
-     */
-    public void setMonitorValue22(String monitorValue22) {
-        this.monitorValue22 = monitorValue22;
-    }
-
-    /**
-     * @return the monitorValue23
-     */
-    public String getMonitorValue23() {
-        return monitorValue23;
-    }
-
-    /**
-     * @param monitorValue23 the monitorValue23 to set
-     */
-    public void setMonitorValue23(String monitorValue23) {
-        this.monitorValue23 = monitorValue23;
+            case 21:
+                this.monitorValue21 = monitorValue;
+            case 22:
+                this.monitorValue22 = monitorValue;
+            case 23:
+                this.monitorValue23 = monitorValue;
+        }
     }
 
 }

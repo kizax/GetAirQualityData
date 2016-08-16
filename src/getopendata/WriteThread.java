@@ -28,7 +28,7 @@ public class WriteThread extends Thread {
         try {
 
             synchronized (fileWriter) {
-                fileWriter.write(record + "\n");
+                fileWriter.write(record + System.getProperty("line.separator"));
                 fileWriter.flush();
             }
         } catch (IOException e) {

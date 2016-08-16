@@ -2,12 +2,11 @@ obproject/private/
 builprivate/
 build/
 nbbuild/
-dist/
+dist/record/
 nbdist/
 nbactions.xml
 .nb-gradle//
 nbbuild/
-dist/
 nbdist/
 nbactions.xml
 .nb-gradle/
@@ -16,3 +15,4 @@ nbactions.xml
 
 *.csv
 
+/dist/
