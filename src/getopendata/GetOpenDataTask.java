@@ -314,8 +314,25 @@ public class GetOpenDataTask implements Runnable {
         }
     }
 
-    private static void clearErrorValue(Map<String, AirQualityData> airQualityDataMap, Map<Integer, String> siteMap, int RAINF_ITEM_ID) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    private static void clearErrorValue(Map<String, AirQualityData> airQualityDataMap, Map<Integer, String> siteMap, int itemId) {
+        final int HOURS_IN_DAY = 24;
+        final String MISSING_STR = "0";
+
+        //rainf 若有"NR" , 修正為0
+        for (int siteId : siteMap.keySet()) {
+            AirQualityData airQualityData = airQualityDataMap.get(siteId + "," + itemId);
+            if (null != airQualityData) {
+                for (int i = 0; i < HOURS_IN_DAY; i++) {
+                    try {
+                        String monitorValue = airQualityData.getMonitorValue(i);
+                        if (monitorValue.contains("NR")) {
+                            airQualityData.setMonitorValue(i, MISSING_STR);
+                        }
+                    } catch (NumberFormatException e) {
+                    }
+                }
+            }
+        }
     }
 
 }
