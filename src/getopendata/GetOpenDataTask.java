@@ -32,16 +32,19 @@ import org.xml.sax.SAXException;
  */
 public class GetOpenDataTask implements Runnable {
 
-    private final String csvFileName;
+    private final String historyCsvFileName;
+    private final String resultCsvFileName;
     private final FileWriter logFileWriter;
-    private Map<Integer, String> itemMap;
+    private Map<Integer, String> itemIdMap;
     private Map<Integer, String> siteMap;
     private Date specificDate;
 
-    public GetOpenDataTask(String resultCsvFileName, FileWriter logFileWriter, Map itemMap, Map siteMap, Date specificDate) {
-        this.csvFileName = resultCsvFileName;
+    public GetOpenDataTask(String historyCsvFileName, String resultCsvFileName,
+            FileWriter logFileWriter, Map itemIdMap, Map siteMap, Date specificDate) {
+        this.historyCsvFileName = historyCsvFileName;
+        this.resultCsvFileName = resultCsvFileName;
         this.logFileWriter = logFileWriter;
-        this.itemMap = itemMap;
+        this.itemIdMap = itemIdMap;
         this.siteMap = siteMap;
         this.specificDate = specificDate;
     }
@@ -74,7 +77,7 @@ public class GetOpenDataTask implements Runnable {
                 //看看是否已有紀錄，若還沒有，則放入airQualityDataMap
                 int puttingCount = 0;
                 for (AirQualityData airQualityData : airQualityDataList) {
-                    if (itemMap.containsKey(airQualityData.getItemId())
+                    if (itemIdMap.containsKey(airQualityData.getItemId())
                             && airQualityData.getMonitorDateStr().equals(TimestampUtils.dateToStr(specificDate))
                             && !airQualityDataMap.containsKey(airQualityData.getSiteId() + "," + airQualityData.getItemId())) {
                         airQualityDataMap.put(airQualityData.getSiteId() + "," + airQualityData.getItemId(), airQualityData);
@@ -96,16 +99,16 @@ public class GetOpenDataTask implements Runnable {
 
             }
 
-            //補值
+            //補上dummy值
             LogUtils.log(logFileWriter, String.format("%1$s\tNow have %2$d data", TimestampUtils.getTimestampStr(), airQualityDataMap.values().size()));
             for (int siteId : siteMap.keySet()) {
-                for (int itemId : itemMap.keySet()) {
+                for (int itemId : itemIdMap.keySet()) {
                     if (!airQualityDataMap.containsKey(siteId + "," + itemId)) {
 
                         String dataTimeStr = TimestampUtils.dateToStr(specificDate);
                         DateFormat dataFromat = new SimpleDateFormat("yyyy/M/d");
                         Date monitorDate = dataFromat.parse(dataTimeStr);
-                        AirQualityData dummyAirQualityData = new AirQualityData(siteId, siteMap.get(siteId), itemId, itemMap.get(itemId), monitorDate);
+                        AirQualityData dummyAirQualityData = new AirQualityData(siteId, siteMap.get(siteId), itemId, itemIdMap.get(itemId), monitorDate);
 
                         airQualityDataMap.put(siteId + "," + itemId, dummyAirQualityData);
                     }
@@ -114,12 +117,12 @@ public class GetOpenDataTask implements Runnable {
             LogUtils.log(logFileWriter, String.format("%1$s\tAfter filling up with dummy data, now have %2$d data", TimestampUtils.getTimestampStr(), airQualityDataMap.values().size()));
 
             //清除錯誤值
-            clearAllErrorValue(siteMap, itemMap, airQualityDataMap);
+            clearAllErrorValue(siteMap, itemIdMap, airQualityDataMap);
 
             //建立紀錄檔
             LogUtils.log(logFileWriter, String.format("%1$s\tNow start writing data into file", TimestampUtils.getTimestampStr()));
 
-            File csvDataFile = new File(csvFileName);
+            File csvDataFile = new File(resultCsvFileName);
 
             if (!csvDataFile.getParentFile().exists()) {
                 csvDataFile.getParentFile().mkdirs();
@@ -143,9 +146,68 @@ public class GetOpenDataTask implements Runnable {
 
             LogUtils.log(logFileWriter, String.format("%1$s\tSuccessfully writing %2$d data into record file", TimestampUtils.getTimestampStr(), writingCount));
 
-            
-            
-            
+            ///////////////////////////////////
+            //建立itemMap
+            Map<String, Integer> itemMap = new HashMap();
+            itemMap.put("SO2", 1);
+            itemMap.put("CO", 2);
+            itemMap.put("O3", 3);
+            itemMap.put("PM10", 4);
+            itemMap.put("NOx", 5);
+
+            itemMap.put("NO", 6);
+            itemMap.put("NO2", 7);
+            itemMap.put("AMB_TEMP", 14);
+            itemMap.put("RAINFALL", 23);
+            itemMap.put("PM2.5", 33);
+
+            itemMap.put("RH", 38);
+
+            ArrayList<AirQualityRecordData> airQualityDataList = new ArrayList();
+
+            //讀歷年資料檔        
+            ArrayList<AirQualityRecordData> historyAirQualityDataList = Step.readFile(historyCsvFileName, logFileWriter);
+            addList(airQualityDataList, historyAirQualityDataList);
+
+            //讀已經補過缺漏值的資料
+            ArrayList<AirQualityRecordData> recentAirQualityDataList = Step.readFile(resultCsvFileName, logFileWriter);
+            addList(airQualityDataList, recentAirQualityDataList);
+
+            //新抓的資料轉成AirQualityRecordData格式
+            ArrayList<AirQualityRecordData> newAirQualityDataList = new ArrayList();
+            for (AirQualityData airQualityData : airQualityDataMap.values()) {
+                newAirQualityDataList.add(new AirQualityRecordData(airQualityData.getRecordStr()));
+            }
+            addList(airQualityDataList, newAirQualityDataList);
+
+            //建立hashMap<String,AirQualityData>   測站 日期 測項 -> airQualityData
+            Map<String, AirQualityRecordData> airQualityRecordDataMap = Step.generateAirQualityDataMap(airQualityDataList, logFileWriter);
+
+            //開始補值
+            int numOfNotFilledValueLastTime = Integer.MAX_VALUE;
+            int numOfNotFilledValue;
+            int roundCount = 0;
+            while (true) {
+                roundCount++;
+                LogUtils.log(logFileWriter, String.format("%1$s\tStart filling data, round %2$d", TimestampUtils.getTimestampStr(), roundCount));
+                numOfNotFilledValue = Step.fillUpAirQualityData(airQualityRecordDataMap, airQualityDataList, logFileWriter);
+                LogUtils.log(logFileWriter, String.format("%1$s\tRound %2$d still have %3$d not filled value", TimestampUtils.getTimestampStr(), roundCount, numOfNotFilledValue));
+
+                if (numOfNotFilledValue != numOfNotFilledValueLastTime) {
+                    numOfNotFilledValueLastTime = numOfNotFilledValue;
+                } else {
+                    LogUtils.log(logFileWriter, String.format("%1$s\tCannot fill sothing more values, break", TimestampUtils.getTimestampStr()));
+                    break;
+                }
+            }
+
+            //建立紀錄檔
+            LogUtils.log(logFileWriter, String.format("%1$s\tNow start writing data into file", TimestampUtils.getTimestampStr()));
+            FileWriter csvResultFileWriter = Step.createFileWriter(resultCsvFileName, false);
+
+            //寫檔
+            Step.writeFile(csvResultFileWriter, airQualityDataList, logFileWriter);
+
         } catch (IOException ex) {
             Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
             LogUtils.log(logFileWriter, String.format("%1$s\t%2$s", TimestampUtils.getTimestampStr(), ex));
@@ -186,7 +248,26 @@ public class GetOpenDataTask implements Runnable {
         return jsonStr;
     }
 
-    public static void clearAllErrorValue(Map<Integer, String> siteMap, Map<Integer, String> itemMap, Map<String, AirQualityData> airQualityDataMap) {
+    private static String stripExtension(String str) {
+        // Handle null case specially.
+
+        if (str == null) {
+            return null;
+        }
+
+        // Get position of last '.'.
+        int pos = str.lastIndexOf(".");
+
+        // If there wasn't any '.' just return the string as is.
+        if (pos == -1) {
+            return str;
+        }
+
+        // Otherwise return the string, up to the dot.
+        return str.substring(0, pos);
+    }
+
+    public static void clearAllErrorValue(Map<Integer, String> siteMap, Map<Integer, String> itemIdMap, Map<String, AirQualityData> airQualityDataMap) {
 
         final int AMB_TEMP_ITEM_ID = 14;
         final int CO_ITEM_ID = 2;
@@ -335,6 +416,12 @@ public class GetOpenDataTask implements Runnable {
                     }
                 }
             }
+        }
+    }
+
+    private void addList(ArrayList<AirQualityRecordData> destAirQualityDataList, ArrayList<AirQualityRecordData> srcAirQualityDataList) {
+        for (AirQualityRecordData airQualityRecordData : srcAirQualityDataList) {
+            destAirQualityDataList.add(airQualityRecordData);
         }
     }
 

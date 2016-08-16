@@ -3,6 +3,7 @@ package getopendata;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -18,6 +19,7 @@ public class Main {
         } catch (ArrayIndexOutOfBoundsException e) {
         }
 
+        String historyCsvFileName = folderPath + "/record/airQualityDataHistory.csv";
         String resultCsvFileName = folderPath + "/record/airQualityData.csv";
         String logFileName = folderPath + "/record/log.txt";
 
@@ -43,21 +45,21 @@ public class Main {
 
         LogUtils.log(logFileWriter, String.format("%1$s\tStart air quality open data downloader!", TimestampUtils.getTimestampStr()));
 
-        //建立itemMap
-        Map<Integer, String> itemMap = new HashMap();
-        itemMap.put(1, "SO2");
-        itemMap.put(2, "CO");
-        itemMap.put(3, "O3");
-        itemMap.put(4, "PM10");
-        itemMap.put(5, "NOx");
+        //建立itemIdMap
+        Map<Integer, String> itemIdMap = new HashMap();
+        itemIdMap.put(1, "SO2");
+        itemIdMap.put(2, "CO");
+        itemIdMap.put(3, "O3");
+        itemIdMap.put(4, "PM10");
+        itemIdMap.put(5, "NOx");
 
-        itemMap.put(6, "NO");
-        itemMap.put(7, "NO2");
-        itemMap.put(14, "AMB_TEMP");
-        itemMap.put(23, "RAINFALL");
-        itemMap.put(33, "PM2.5");
+        itemIdMap.put(6, "NO");
+        itemIdMap.put(7, "NO2");
+        itemIdMap.put(14, "AMB_TEMP");
+        itemIdMap.put(23, "RAINFALL");
+        itemIdMap.put(33, "PM2.5");
 
-        itemMap.put(38, "RH");
+        itemIdMap.put(38, "RH");
 
         //建立siteMap
         Map<Integer, String> siteMap = new HashMap();
@@ -153,8 +155,12 @@ public class Main {
         calendar.set( Calendar.MILLISECOND, 0 );
         Date specificDate = calendar.getTime();
 
-        Thread getOpenDataTaskThread = new Thread(new GetOpenDataTask(resultCsvFileName, logFileWriter, itemMap, siteMap, specificDate));
+        Thread getOpenDataTaskThread = new Thread(new GetOpenDataTask(historyCsvFileName, resultCsvFileName, logFileWriter, itemIdMap, siteMap, specificDate));
         getOpenDataTaskThread.start();
+        
+        
 
     }
+    
+
 }
