@@ -48,6 +48,9 @@ public class AirQualityData {
     private String monitorValue21;
     private String monitorValue22;
     private String monitorValue23;
+    private static int RAINFALL_ITEM_ID = 23;
+    private static String NR = "NR";
+    private static String ZERO = "0";
 
     public AirQualityData(int siteId, String siteName, int itemId, String itemName,
             String itemEngName, String itemUnit, Date monitorDate,
@@ -65,6 +68,85 @@ public class AirQualityData {
         this.itemEngName = itemEngName;
         this.itemUnit = itemUnit;
         this.monitorDate = monitorDate;
+
+        if (itemId == RAINFALL_ITEM_ID) {
+
+            if (monitorValue00.contains(NR)) {
+                this.monitorValue00 = ZERO;
+            }
+            if (monitorValue01.contains(NR)) {
+                this.monitorValue01 = ZERO;
+            }
+            if (monitorValue02.contains(NR)) {
+                this.monitorValue02 = ZERO;
+            }
+            if (monitorValue03.contains(NR)) {
+                this.monitorValue03 = ZERO;
+            }
+            if (monitorValue04.contains(NR)) {
+                this.monitorValue04 = ZERO;
+            }
+            if (monitorValue05.contains(NR)) {
+                this.monitorValue05 = ZERO;
+            }
+            if (monitorValue06.contains(NR)) {
+                this.monitorValue06 = ZERO;
+            }
+            if (monitorValue07.contains(NR)) {
+                this.monitorValue07 = ZERO;
+            }
+            if (monitorValue08.contains(NR)) {
+                this.monitorValue08 = ZERO;
+            }
+            if (monitorValue09.contains(NR)) {
+                this.monitorValue09 = ZERO;
+            }
+            if (monitorValue10.contains(NR)) {
+                this.monitorValue10 = ZERO;
+            }
+            if (monitorValue11.contains(NR)) {
+                this.monitorValue11 = ZERO;
+            }
+            if (monitorValue12.contains(NR)) {
+                this.monitorValue12 = ZERO;
+            }
+            if (monitorValue13.contains(NR)) {
+                this.monitorValue13 = ZERO;
+            }
+            if (monitorValue14.contains(NR)) {
+                this.monitorValue14 = ZERO;
+            }
+            if (monitorValue15.contains(NR)) {
+                this.monitorValue15 = ZERO;
+            }
+            if (monitorValue16.contains(NR)) {
+                this.monitorValue16 = ZERO;
+            }
+            if (monitorValue17.contains(NR)) {
+                this.monitorValue17 = ZERO;
+            }
+            if (monitorValue18.contains(NR)) {
+                this.monitorValue18 = ZERO;
+            }
+            if (monitorValue19.contains(NR)) {
+                this.monitorValue19 = ZERO;
+            }
+            if (monitorValue20.contains(NR)) {
+                this.monitorValue20 = ZERO;
+            }
+            if (monitorValue21.contains(NR)) {
+                this.monitorValue21 = ZERO;
+            }
+            if (monitorValue22.contains(NR)) {
+                this.monitorValue22 = ZERO;
+            }
+            if (monitorValue23.contains(NR)) {
+                this.monitorValue23 = ZERO;
+            }
+            return;
+
+        }
+
         this.monitorValue00 = monitorValue00;
         this.monitorValue01 = monitorValue01;
         this.monitorValue02 = monitorValue02;
