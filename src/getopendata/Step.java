@@ -11,9 +11,12 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.text.DateFormat;
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -215,7 +218,7 @@ public class Step {
     }
 
     public static void writeFile(FileWriter resultFileWriter,
-            ArrayList<AirQualityRecordData> airQualityDataList, FileWriter logFileWriter) {
+            ArrayList<AirQualityRecordData> airQualityRecordDataList, FileWriter logFileWriter) {
         try {
             //寫入檔頭BOM，避免EXCEL開啟變成亂碼
             byte[] bom = new byte[]{(byte) 0xEF, (byte) 0xBB, (byte) 0xBF};
@@ -223,8 +226,29 @@ public class Step {
 
             //寫入紀錄檔
             int writingCount = 0;
-            for (AirQualityRecordData airQualityData : airQualityDataList) {
+            for (AirQualityRecordData airQualityData : airQualityRecordDataList) {
                 writeCsvFile(resultFileWriter, airQualityData.getRecordStr());
+                writingCount++;
+            }
+
+            LogUtils.log(logFileWriter, String.format("%1$s\tSuccessfully writing %2$d data into record file", TimestampUtils.getTimestampStr(), writingCount));
+        } catch (IOException ex) {
+            Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+        public static void writeFile(FileWriter csvFileWriter,
+            Collection<AirQualityData> airQualityDataList, FileWriter logFileWriter) {
+        try {
+
+            //寫入檔頭BOM，避免EXCEL開啟變成亂碼
+            byte[] bom = new byte[]{(byte) 0xEF, (byte) 0xBB, (byte) 0xBF};
+            csvFileWriter.write(new String(bom));
+
+            //寫入紀錄檔
+            int writingCount = 0;
+            for (AirQualityData airQualityData : airQualityDataList) {
+                writeCsvFile(csvFileWriter, airQualityData.getRecordStr());
                 writingCount++;
             }
 
@@ -278,6 +302,158 @@ public class Step {
 
         return monitorValue;
     }
+    
+     public static void clearAllErrorValue(Map<Integer, String> siteMap, Map<Integer, String> itemIdMap, Map<String, AirQualityData> airQualityDataMap) {
+
+        final int AMB_TEMP_ITEM_ID = 14;
+        final int CO_ITEM_ID = 2;
+        final int NO_ITEM_ID = 6;
+        final int NO2_ITEM_ID = 7;
+        final int NOX_ITEM_ID = 5;
+        final int O3_ITEM_ID = 3;
+        final int PM10_ITEM_ID = 4;
+        final int PM25_ITEM_ID = 33;
+        final int RAINF_ITEM_ID = 23;
+        final int RH_ITEM_ID = 38;
+        final int SO2_ITEM_ID = 1;
+
+        //AMB_T	<6.4 ,修正為missing
+        //AMB_T	>43.5 ,修正為missing
+        final float AMB_TEMP_UPPER_BOUND = 43.5f;
+        final float AMB_TEMP_LOWER_BOUND = 6.4f;
+        clearErrorValue(airQualityDataMap, siteMap, AMB_TEMP_ITEM_ID, AMB_TEMP_UPPER_BOUND, AMB_TEMP_LOWER_BOUND);
+
+        //CO >50.5 修正為missing
+        final float CO_UPPER_BOUND = 50.5f;
+        clearErrorValue(airQualityDataMap, siteMap, CO_ITEM_ID, CO_UPPER_BOUND);
+
+        //NO >505 修正為missing
+        final float NO_UPPER_BOUND = 505f;
+        clearErrorValue(airQualityDataMap, siteMap, NO_ITEM_ID, NO_UPPER_BOUND);
+
+        //NO2 >505 修正為missing
+        final float NO2_UPPER_BOUND = 505f;
+        clearErrorValue(airQualityDataMap, siteMap, NO2_ITEM_ID, NO2_UPPER_BOUND);
+
+        //NOX >505 修正為missing
+        final float NOX_UPPER_BOUND = 505f;
+        clearErrorValue(airQualityDataMap, siteMap, NOX_ITEM_ID, NOX_UPPER_BOUND);
+
+        //O3 >505 修正為missing
+        final float O3_UPPER_BOUND = 505f;
+        clearErrorValue(airQualityDataMap, siteMap, O3_ITEM_ID, O3_UPPER_BOUND);
+
+        //PM10 >10200 修正為missing
+        final float PM10_UPPER_BOUND = 10200f;
+        clearErrorValue(airQualityDataMap, siteMap, PM10_ITEM_ID, PM10_UPPER_BOUND);
+
+        //PM2.5 >10200 修正為missing
+        final float PM25_UPPER_BOUND = 10200f;
+        clearErrorValue(airQualityDataMap, siteMap, PM25_ITEM_ID, PM25_UPPER_BOUND);
+
+        //PM2.5 逐日同小時之PM2.5若>PM10, 修正為missing
+        clearErrorValue(airQualityDataMap, siteMap);
+
+        //rainf 若有"NR" , 修正為0
+        clearErrorValue(airQualityDataMap, siteMap, RAINF_ITEM_ID);
+
+        //RH <0 , 修正為missing
+        //RH >100 , 修正為missing
+        final float RH_UPPER_BOUND = 100f;
+        final float RH_LOWER_BOUND = 0f;
+        clearErrorValue(airQualityDataMap, siteMap, RH_ITEM_ID, RH_UPPER_BOUND, RH_LOWER_BOUND);
+
+        //SO2 >505,  修正為missing
+        final float SO2_UPPER_BOUND = 505f;
+        clearErrorValue(airQualityDataMap, siteMap, SO2_ITEM_ID, SO2_UPPER_BOUND);
+
+    }
+
+    private static void clearErrorValue(Map<String, AirQualityData> airQualityDataMap, Map<Integer, String> siteMap, int itemId, float upperBound, float lowerBound) {
+        final int HOURS_IN_DAY = 24;
+        final String MISSING_STR = "";
+
+        for (int siteId : siteMap.keySet()) {
+            AirQualityData airQualityData = airQualityDataMap.get(siteId + "," + itemId);
+            if (null != airQualityData) {
+                for (int i = 0; i < HOURS_IN_DAY; i++) {
+                    try {
+                        float monitorValue = Float.valueOf(airQualityData.getMonitorValue(i));
+                        if (monitorValue < lowerBound || monitorValue > upperBound) {
+                            airQualityData.setMonitorValue(i, MISSING_STR);
+                        }
+                    } catch (NumberFormatException e) {
+                    }
+                }
+            }
+        }
+    }
+
+    private static void clearErrorValue(Map<String, AirQualityData> airQualityDataMap, Map<Integer, String> siteMap, int itemId, float upperBound) {
+        final int HOURS_IN_DAY = 24;
+        final String MISSING_STR = "";
+
+        for (int siteId : siteMap.keySet()) {
+            AirQualityData airQualityData = airQualityDataMap.get(siteId + "," + itemId);
+            if (null != airQualityData) {
+                for (int i = 0; i < HOURS_IN_DAY; i++) {
+                    try {
+                        float monitorValue = Float.valueOf(airQualityData.getMonitorValue(i));
+                        if (monitorValue > upperBound) {
+                            airQualityData.setMonitorValue(i, MISSING_STR);
+                        }
+                    } catch (NumberFormatException e) {
+                    }
+                }
+            }
+        }
+    }
+
+    private static void clearErrorValue(Map<String, AirQualityData> airQualityDataMap, Map<Integer, String> siteMap) {
+        final int HOURS_IN_DAY = 24;
+        final String MISSING_STR = "";
+        final int PM10_ITEM_ID = 4;
+        final int PM25_ITEM_ID = 33;
+
+        //PM2.5 逐日同小時之PM2.5若>PM10, 修正為missing
+        for (int siteId : siteMap.keySet()) {
+            AirQualityData pm10AirQualityData = airQualityDataMap.get(siteId + "," + PM10_ITEM_ID);
+            AirQualityData pm25AirQualityData = airQualityDataMap.get(siteId + "," + PM25_ITEM_ID);
+            if (null != pm10AirQualityData) {
+                for (int i = 0; i < HOURS_IN_DAY; i++) {
+                    try {
+                        float pm10 = Float.valueOf(pm10AirQualityData.getMonitorValue(i));
+                        float pm25 = Float.valueOf(pm25AirQualityData.getMonitorValue(i));
+                        if (pm25 > pm10) {
+                            pm25AirQualityData.setMonitorValue(i, MISSING_STR);
+                        }
+                    } catch (NumberFormatException e) {
+                    }
+                }
+            }
+        }
+    }
+
+    private static void clearErrorValue(Map<String, AirQualityData> airQualityDataMap, Map<Integer, String> siteMap, int itemId) {
+        final int HOURS_IN_DAY = 24;
+        final String MISSING_STR = "0";
+
+        //rainf 若有"NR" , 修正為0
+        for (int siteId : siteMap.keySet()) {
+            AirQualityData airQualityData = airQualityDataMap.get(siteId + "," + itemId);
+            if (null != airQualityData) {
+                for (int i = 0; i < HOURS_IN_DAY; i++) {
+                    try {
+                        String monitorValue = airQualityData.getMonitorValue(i);
+                        if (monitorValue.contains("NR")) {
+                            airQualityData.setMonitorValue(i, MISSING_STR);
+                        }
+                    } catch (NumberFormatException e) {
+                    }
+                }
+            }
+        }
+    }
 
     private static String convertArrayToStr(float[] floatArray) {
         String str = "";
@@ -287,5 +463,27 @@ public class Step {
             count++;
         }
         return str;
+    }
+
+    static void fillWithDummyData(Map<String, AirQualityData> airQualityDataMap, Map<Integer, String> siteMap, Map<Integer, String> itemIdMap, Date specificDate, FileWriter logFileWriter) {
+       LogUtils.log(logFileWriter, String.format("%1$s\tNow have %2$d data", TimestampUtils.getTimestampStr(), airQualityDataMap.values().size()));
+            for (int siteId : siteMap.keySet()) {
+                for (int itemId : itemIdMap.keySet()) {
+                    if (!airQualityDataMap.containsKey(siteId + "," + itemId)) {
+                        try {
+                            String dataTimeStr = TimestampUtils.dateToStr(specificDate);
+                            DateFormat dataFromat = new SimpleDateFormat("yyyy/M/d");
+                            Date monitorDate = dataFromat.parse(dataTimeStr);
+                            AirQualityData dummyAirQualityData = new AirQualityData(siteId, siteMap.get(siteId), itemId, itemIdMap.get(itemId), monitorDate);
+                            
+                            airQualityDataMap.put(siteId + "," + itemId, dummyAirQualityData);
+                        } catch (ParseException ex) {
+
+                        }
+                    }
+                }
+            }
+            LogUtils.log(logFileWriter, String.format("%1$s\tAfter filling up with dummy data, now have %2$d data", TimestampUtils.getTimestampStr(), airQualityDataMap.values().size()));
+
     }
 }
