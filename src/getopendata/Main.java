@@ -3,10 +3,8 @@ package getopendata;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Map;
 
 public class Main {
@@ -20,7 +18,8 @@ public class Main {
         }
 
         String historyCsvFileName = folderPath + "/record/airQualityDataHistory.csv";
-        String resultCsvFileName = folderPath + "/record/airQualityData.csv";
+        String airQualityDataCsvFileName = folderPath + "/record/airQualityData.csv";
+        String filledUpAirQualityDataCsvFileName = folderPath + "/record/airQualityData_afterFillValue.csv";
         String logFileName = folderPath + "/record/log.txt";
 
         //建立log file
@@ -47,7 +46,7 @@ public class Main {
 
         //建立itemIdMap
         Map<Integer, String> itemIdMap = MapUtils.getItemIdMap();
-        
+
         //建立siteMap
         Map<Integer, String> siteMap = MapUtils.getSiteMap();
 
@@ -63,15 +62,14 @@ public class Main {
         calendar.set(Calendar.HOUR_OF_DAY, 0);
         calendar.set(Calendar.MINUTE, 0);
         calendar.set(Calendar.SECOND, 0);
-        calendar.set( Calendar.MILLISECOND, 0 );
+        calendar.set(Calendar.MILLISECOND, 0);
         Date specificDate = calendar.getTime();
 
-        Thread getOpenDataTaskThread = new Thread(new GetOpenDataTask(historyCsvFileName, resultCsvFileName, logFileWriter, itemIdMap, siteMap, specificDate));
+        Thread getOpenDataTaskThread = new Thread(new GetOpenDataTask(historyCsvFileName, 
+                airQualityDataCsvFileName, filledUpAirQualityDataCsvFileName,
+                logFileWriter, itemIdMap, siteMap, specificDate));
         getOpenDataTaskThread.start();
-        
-        
 
     }
-    
 
 }

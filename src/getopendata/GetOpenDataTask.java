@@ -32,16 +32,18 @@ import org.xml.sax.SAXException;
 public class GetOpenDataTask implements Runnable {
 
     private final String historyCsvFileName;
-    private final String resultCsvFileName;
+    private final String airQualityDataCsvFileName;
+    private final String filledUpAirQualityDataCsvFileName;
     private final FileWriter logFileWriter;
     private Map<Integer, String> itemIdMap;
     private Map<Integer, String> siteMap;
     private Date specificDate;
 
-    public GetOpenDataTask(String historyCsvFileName, String resultCsvFileName,
+    public GetOpenDataTask(String historyCsvFileName, String airQualityDataCsvFileName, String filledUpAirQualityDataCsvFileName,
             FileWriter logFileWriter, Map itemIdMap, Map siteMap, Date specificDate) {
         this.historyCsvFileName = historyCsvFileName;
-        this.resultCsvFileName = resultCsvFileName;
+        this.airQualityDataCsvFileName = airQualityDataCsvFileName;
+        this.filledUpAirQualityDataCsvFileName = filledUpAirQualityDataCsvFileName;
         this.logFileWriter = logFileWriter;
         this.itemIdMap = itemIdMap;
         this.siteMap = siteMap;
@@ -108,7 +110,7 @@ public class GetOpenDataTask implements Runnable {
             //建立紀錄檔
             LogUtils.log(logFileWriter, String.format("%1$s\tNow start writing data into file", TimestampUtils.getTimestampStr()));
 
-            File csvDataFile = new File(resultCsvFileName);
+            File csvDataFile = new File(airQualityDataCsvFileName);
 
             if (!csvDataFile.getParentFile().exists()) {
                 csvDataFile.getParentFile().mkdirs();
@@ -118,7 +120,6 @@ public class GetOpenDataTask implements Runnable {
 
             Step.writeFile(csvFileWriter,airQualityDataMap.values(), logFileWriter);
 
-            ///////////////////////////////////
             //建立itemMap
             Map<String, Integer> itemMap = MapUtils.getItemMap();
 
@@ -129,7 +130,7 @@ public class GetOpenDataTask implements Runnable {
             addList(airQualityRecordDataList, historyAirQualityDataList);
 
             //讀已經補過缺漏值的資料
-            ArrayList<AirQualityRecordData> recentAirQualityDataList = Step.readFile(resultCsvFileName, logFileWriter);
+            ArrayList<AirQualityRecordData> recentAirQualityDataList = Step.readFile(filledUpAirQualityDataCsvFileName, logFileWriter);
             addList(airQualityRecordDataList, recentAirQualityDataList);
 
             //新抓的資料轉成AirQualityRecordData格式
@@ -162,7 +163,7 @@ public class GetOpenDataTask implements Runnable {
 
             //建立紀錄檔
             LogUtils.log(logFileWriter, String.format("%1$s\tNow start writing data into file", TimestampUtils.getTimestampStr()));
-            FileWriter csvResultFileWriter = Step.createFileWriter(resultCsvFileName, false);
+            FileWriter csvResultFileWriter = Step.createFileWriter(filledUpAirQualityDataCsvFileName, false);
 
             //寫檔
             Step.writeFile(csvResultFileWriter, airQualityRecordDataList, logFileWriter);

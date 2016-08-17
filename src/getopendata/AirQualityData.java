@@ -97,41 +97,41 @@ public class AirQualityData {
         Map<String, Integer> siteIdMap = MapUtils.getSiteIdMap();
         Map<String, Integer> itemIdMap = MapUtils.getItemMap();
 
-        this.siteId = itemIdMap.get(airQualityRecordData.getSiteName());
+        this.siteId = siteIdMap.get(airQualityRecordData.getSiteName());
         this.siteName = airQualityRecordData.getSiteName();
         this.itemId = itemIdMap.get(airQualityRecordData.getItemName());
-        this.itemName = airQualityRecordData.getItemName();
-        this.itemEngName = "";
+        this.itemName = "";
+        this.itemEngName = airQualityRecordData.getItemName();
         this.itemUnit = "";
         this.monitorDate = airQualityRecordData.getMonitorDate();
-        this.monitorValue00 = Float.toString(airQualityRecordData.getMonitorValue(0));
-        this.monitorValue01 = Float.toString(airQualityRecordData.getMonitorValue(1));
-        this.monitorValue02 = Float.toString(airQualityRecordData.getMonitorValue(2));
-        this.monitorValue03 = Float.toString(airQualityRecordData.getMonitorValue(3));
-        this.monitorValue04 = Float.toString(airQualityRecordData.getMonitorValue(4));
-        this.monitorValue05 = Float.toString(airQualityRecordData.getMonitorValue(5));
+        this.monitorValue00 = floatToString(airQualityRecordData.getMonitorValue(0));
+        this.monitorValue01 = floatToString(airQualityRecordData.getMonitorValue(1));
+        this.monitorValue02 = floatToString(airQualityRecordData.getMonitorValue(2));
+        this.monitorValue03 = floatToString(airQualityRecordData.getMonitorValue(3));
+        this.monitorValue04 = floatToString(airQualityRecordData.getMonitorValue(4));
+        this.monitorValue05 = floatToString(airQualityRecordData.getMonitorValue(5));
 
-        this.monitorValue06 = Float.toString(airQualityRecordData.getMonitorValue(6));
-        this.monitorValue07 = Float.toString(airQualityRecordData.getMonitorValue(7));
-        this.monitorValue08 = Float.toString(airQualityRecordData.getMonitorValue(8));
-        this.monitorValue09 = Float.toString(airQualityRecordData.getMonitorValue(9));
-        this.monitorValue10 = Float.toString(airQualityRecordData.getMonitorValue(10));
+        this.monitorValue06 = floatToString(airQualityRecordData.getMonitorValue(6));
+        this.monitorValue07 = floatToString(airQualityRecordData.getMonitorValue(7));
+        this.monitorValue08 = floatToString(airQualityRecordData.getMonitorValue(8));
+        this.monitorValue09 = floatToString(airQualityRecordData.getMonitorValue(9));
+        this.monitorValue10 = floatToString(airQualityRecordData.getMonitorValue(10));
 
-        this.monitorValue11 = Float.toString(airQualityRecordData.getMonitorValue(11));
-        this.monitorValue12 = Float.toString(airQualityRecordData.getMonitorValue(12));
-        this.monitorValue13 = Float.toString(airQualityRecordData.getMonitorValue(13));
-        this.monitorValue14 = Float.toString(airQualityRecordData.getMonitorValue(14));
-        this.monitorValue15 = Float.toString(airQualityRecordData.getMonitorValue(15));
+        this.monitorValue11 = floatToString(airQualityRecordData.getMonitorValue(11));
+        this.monitorValue12 = floatToString(airQualityRecordData.getMonitorValue(12));
+        this.monitorValue13 = floatToString(airQualityRecordData.getMonitorValue(13));
+        this.monitorValue14 = floatToString(airQualityRecordData.getMonitorValue(14));
+        this.monitorValue15 = floatToString(airQualityRecordData.getMonitorValue(15));
 
-        this.monitorValue16 = Float.toString(airQualityRecordData.getMonitorValue(16));
-        this.monitorValue17 = Float.toString(airQualityRecordData.getMonitorValue(17));
-        this.monitorValue18 = Float.toString(airQualityRecordData.getMonitorValue(18));
-        this.monitorValue19 = Float.toString(airQualityRecordData.getMonitorValue(19));
-        this.monitorValue20 = Float.toString(airQualityRecordData.getMonitorValue(20));
+        this.monitorValue16 = floatToString(airQualityRecordData.getMonitorValue(16));
+        this.monitorValue17 = floatToString(airQualityRecordData.getMonitorValue(17));
+        this.monitorValue18 = floatToString(airQualityRecordData.getMonitorValue(18));
+        this.monitorValue19 = floatToString(airQualityRecordData.getMonitorValue(19));
+        this.monitorValue20 = floatToString(airQualityRecordData.getMonitorValue(20));
 
-        this.monitorValue21 = Float.toString(airQualityRecordData.getMonitorValue(21));
-        this.monitorValue22 = Float.toString(airQualityRecordData.getMonitorValue(22));
-        this.monitorValue23 = Float.toString(airQualityRecordData.getMonitorValue(23));
+        this.monitorValue21 = floatToString(airQualityRecordData.getMonitorValue(21));
+        this.monitorValue22 = floatToString(airQualityRecordData.getMonitorValue(22));
+        this.monitorValue23 = floatToString(airQualityRecordData.getMonitorValue(23));
 
     }
 
@@ -383,57 +383,88 @@ public class AirQualityData {
         switch (index) {
             case 0:
                 this.monitorValue00 = monitorValue;
+                break;
             case 1:
                 this.monitorValue01 = monitorValue;
+                break;
             case 2:
                 this.monitorValue02 = monitorValue;
+                break;
             case 3:
                 this.monitorValue03 = monitorValue;
+                break;
             case 4:
                 this.monitorValue04 = monitorValue;
+                break;
             case 5:
                 this.monitorValue05 = monitorValue;
+                break;
 
             case 6:
                 this.monitorValue06 = monitorValue;
+                break;
             case 7:
                 this.monitorValue07 = monitorValue;
+                break;
             case 8:
                 this.monitorValue08 = monitorValue;
+                break;
             case 9:
                 this.monitorValue09 = monitorValue;
+                break;
             case 10:
                 this.monitorValue10 = monitorValue;
+                break;
 
             case 11:
                 this.monitorValue11 = monitorValue;
+                break;
             case 12:
                 this.monitorValue12 = monitorValue;
+                break;
             case 13:
                 this.monitorValue13 = monitorValue;
+                break;
             case 14:
                 this.monitorValue14 = monitorValue;
+                break;
             case 15:
                 this.monitorValue15 = monitorValue;
+                break;
 
             case 16:
                 this.monitorValue16 = monitorValue;
+                break;
             case 17:
                 this.monitorValue17 = monitorValue;
+                break;
             case 18:
                 this.monitorValue18 = monitorValue;
+                break;
             case 19:
                 this.monitorValue19 = monitorValue;
+                break;
             case 20:
                 this.monitorValue20 = monitorValue;
+                break;
 
             case 21:
                 this.monitorValue21 = monitorValue;
+                break;
             case 22:
                 this.monitorValue22 = monitorValue;
+                break;
             case 23:
                 this.monitorValue23 = monitorValue;
+                break;
         }
+    }
+
+    private String floatToString(float monitorValue) {
+        if (monitorValue != -99999.0) {
+            return Float.toString(monitorValue);
+        }
+        return NOT_SET;
     }
 
 }

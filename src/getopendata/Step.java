@@ -7,10 +7,11 @@ package getopendata;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -34,9 +35,11 @@ public class Step {
         try {
             LogUtils.log(logFileWriter, String.format("%1$s\tStart reading the record file", TimestampUtils.getTimestampStr()));
 
-            FileReader fileReader = new FileReader(fileName);
+            File file = new File(fileName);
 
-            BufferedReader bufferedReader = new BufferedReader(fileReader);
+            BufferedReader bufferedReader = new BufferedReader(
+                    new InputStreamReader(
+                            new FileInputStream(file), "UTF8"));
 
             int lineCount = 0;
             while (bufferedReader.ready()) {
@@ -52,7 +55,7 @@ public class Step {
                 }
             }
 
-            fileReader.close();
+            bufferedReader.close();
 
             LogUtils.log(logFileWriter, String.format("%1$s\tSuccessfully reading the record file", TimestampUtils.getTimestampStr(), lineCount));
 
@@ -141,11 +144,11 @@ public class Step {
                     prevYearCalendar.add(Calendar.YEAR, -1);
                     Date prevYear = prevYearCalendar.getTime();
                     int prevYearDayOfWeek = prevYearCalendar.get(Calendar.DAY_OF_WEEK);
-                    
-                    int diff =  dayOfWeek - prevYearDayOfWeek;
+
+                    int diff = dayOfWeek - prevYearDayOfWeek;
                     prevYearCalendar.add(Calendar.DATE, diff);
                     Date prevYearWithSameDayOfWeek = prevYearCalendar.getTime();
-                    
+
                     key = String.format("%1$s %2$s %3$s",
                             airQualityData.getSiteName(), TimestampUtils.dateToStr(prevYearWithSameDayOfWeek),
                             airQualityData.getItemName());
@@ -159,7 +162,6 @@ public class Step {
 //                            TimestampUtils.getTimestampStr(), airQualityData.getLineNum(), airQualityData.getSiteName(), 
 //                            airQualityData.getItemName(), airQualityData.getMonitorDateStrWithDayOfWeek(), index, 
 //                            TimestampUtils.dateToStrWithDayOfWeek(prevYearWithSameDayOfWeek)));
-
                     int validValueCount = 0;
                     float sum = 0;
                     for (int i = 0; i < 10; i++) {
@@ -236,8 +238,8 @@ public class Step {
             Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
-        public static void writeFile(FileWriter csvFileWriter,
+
+    public static void writeFile(FileWriter csvFileWriter,
             Collection<AirQualityData> airQualityDataList, FileWriter logFileWriter) {
         try {
 
@@ -302,8 +304,8 @@ public class Step {
 
         return monitorValue;
     }
-    
-     public static void clearAllErrorValue(Map<Integer, String> siteMap, Map<Integer, String> itemIdMap, Map<String, AirQualityData> airQualityDataMap) {
+
+    public static void clearAllErrorValue(Map<Integer, String> siteMap, Map<Integer, String> itemIdMap, Map<String, AirQualityData> airQualityDataMap) {
 
         final int AMB_TEMP_ITEM_ID = 14;
         final int CO_ITEM_ID = 2;
@@ -419,7 +421,7 @@ public class Step {
         for (int siteId : siteMap.keySet()) {
             AirQualityData pm10AirQualityData = airQualityDataMap.get(siteId + "," + PM10_ITEM_ID);
             AirQualityData pm25AirQualityData = airQualityDataMap.get(siteId + "," + PM25_ITEM_ID);
-            if (null != pm10AirQualityData) {
+            if (null != pm10AirQualityData && null != pm25AirQualityData) {
                 for (int i = 0; i < HOURS_IN_DAY; i++) {
                     try {
                         float pm10 = Float.valueOf(pm10AirQualityData.getMonitorValue(i));
@@ -466,24 +468,24 @@ public class Step {
     }
 
     static void fillWithDummyData(Map<String, AirQualityData> airQualityDataMap, Map<Integer, String> siteMap, Map<Integer, String> itemIdMap, Date specificDate, FileWriter logFileWriter) {
-       LogUtils.log(logFileWriter, String.format("%1$s\tNow have %2$d data", TimestampUtils.getTimestampStr(), airQualityDataMap.values().size()));
-            for (int siteId : siteMap.keySet()) {
-                for (int itemId : itemIdMap.keySet()) {
-                    if (!airQualityDataMap.containsKey(siteId + "," + itemId)) {
-                        try {
-                            String dataTimeStr = TimestampUtils.dateToStr(specificDate);
-                            DateFormat dataFromat = new SimpleDateFormat("yyyy/M/d");
-                            Date monitorDate = dataFromat.parse(dataTimeStr);
-                            AirQualityData dummyAirQualityData = new AirQualityData(siteId, siteMap.get(siteId), itemId, itemIdMap.get(itemId), monitorDate);
-                            
-                            airQualityDataMap.put(siteId + "," + itemId, dummyAirQualityData);
-                        } catch (ParseException ex) {
+        LogUtils.log(logFileWriter, String.format("%1$s\tNow have %2$d data", TimestampUtils.getTimestampStr(), airQualityDataMap.values().size()));
+        for (int siteId : siteMap.keySet()) {
+            for (int itemId : itemIdMap.keySet()) {
+                if (!airQualityDataMap.containsKey(siteId + "," + itemId)) {
+                    try {
+                        String dataTimeStr = TimestampUtils.dateToStr(specificDate);
+                        DateFormat dataFromat = new SimpleDateFormat("yyyy/M/d");
+                        Date monitorDate = dataFromat.parse(dataTimeStr);
+                        AirQualityData dummyAirQualityData = new AirQualityData(siteId, siteMap.get(siteId), itemId, itemIdMap.get(itemId), monitorDate);
 
-                        }
+                        airQualityDataMap.put(siteId + "," + itemId, dummyAirQualityData);
+                    } catch (ParseException ex) {
+
                     }
                 }
             }
-            LogUtils.log(logFileWriter, String.format("%1$s\tAfter filling up with dummy data, now have %2$d data", TimestampUtils.getTimestampStr(), airQualityDataMap.values().size()));
+        }
+        LogUtils.log(logFileWriter, String.format("%1$s\tAfter filling up with dummy data, now have %2$d data", TimestampUtils.getTimestampStr(), airQualityDataMap.values().size()));
 
     }
 }
