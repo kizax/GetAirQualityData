@@ -120,20 +120,7 @@ public class GetOpenDataTask implements Runnable {
 
             ///////////////////////////////////
             //建立itemMap
-            Map<String, Integer> itemMap = new HashMap();
-            itemMap.put("SO2", 1);
-            itemMap.put("CO", 2);
-            itemMap.put("O3", 3);
-            itemMap.put("PM10", 4);
-            itemMap.put("NOx", 5);
-
-            itemMap.put("NO", 6);
-            itemMap.put("NO2", 7);
-            itemMap.put("AMB_TEMP", 14);
-            itemMap.put("RAINFALL", 23);
-            itemMap.put("PM2.5", 33);
-
-            itemMap.put("RH", 38);
+            Map<String, Integer> itemMap = MapUtils.getItemMap();
 
             ArrayList<AirQualityRecordData> airQualityRecordDataList = new ArrayList();
 

@@ -7,6 +7,7 @@ package getopendata;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Map;
 
 /**
  *
@@ -91,6 +92,49 @@ public class AirQualityData {
 
     }
 
+    public AirQualityData(AirQualityRecordData airQualityRecordData) {
+
+        Map<String, Integer> siteIdMap = MapUtils.getSiteIdMap();
+        Map<String, Integer> itemIdMap = MapUtils.getItemMap();
+
+        this.siteId = itemIdMap.get(airQualityRecordData.getSiteName());
+        this.siteName = airQualityRecordData.getSiteName();
+        this.itemId = itemIdMap.get(airQualityRecordData.getItemName());
+        this.itemName = airQualityRecordData.getItemName();
+        this.itemEngName = "";
+        this.itemUnit = "";
+        this.monitorDate = airQualityRecordData.getMonitorDate();
+        this.monitorValue00 = Float.toString(airQualityRecordData.getMonitorValue(0));
+        this.monitorValue01 = Float.toString(airQualityRecordData.getMonitorValue(1));
+        this.monitorValue02 = Float.toString(airQualityRecordData.getMonitorValue(2));
+        this.monitorValue03 = Float.toString(airQualityRecordData.getMonitorValue(3));
+        this.monitorValue04 = Float.toString(airQualityRecordData.getMonitorValue(4));
+        this.monitorValue05 = Float.toString(airQualityRecordData.getMonitorValue(5));
+
+        this.monitorValue06 = Float.toString(airQualityRecordData.getMonitorValue(6));
+        this.monitorValue07 = Float.toString(airQualityRecordData.getMonitorValue(7));
+        this.monitorValue08 = Float.toString(airQualityRecordData.getMonitorValue(8));
+        this.monitorValue09 = Float.toString(airQualityRecordData.getMonitorValue(9));
+        this.monitorValue10 = Float.toString(airQualityRecordData.getMonitorValue(10));
+
+        this.monitorValue11 = Float.toString(airQualityRecordData.getMonitorValue(11));
+        this.monitorValue12 = Float.toString(airQualityRecordData.getMonitorValue(12));
+        this.monitorValue13 = Float.toString(airQualityRecordData.getMonitorValue(13));
+        this.monitorValue14 = Float.toString(airQualityRecordData.getMonitorValue(14));
+        this.monitorValue15 = Float.toString(airQualityRecordData.getMonitorValue(15));
+
+        this.monitorValue16 = Float.toString(airQualityRecordData.getMonitorValue(16));
+        this.monitorValue17 = Float.toString(airQualityRecordData.getMonitorValue(17));
+        this.monitorValue18 = Float.toString(airQualityRecordData.getMonitorValue(18));
+        this.monitorValue19 = Float.toString(airQualityRecordData.getMonitorValue(19));
+        this.monitorValue20 = Float.toString(airQualityRecordData.getMonitorValue(20));
+
+        this.monitorValue21 = Float.toString(airQualityRecordData.getMonitorValue(21));
+        this.monitorValue22 = Float.toString(airQualityRecordData.getMonitorValue(22));
+        this.monitorValue23 = Float.toString(airQualityRecordData.getMonitorValue(23));
+
+    }
+
     public AirQualityData(int siteId, String siteName, int itemId,
             String itemEngName, Date monitorDate) {
 
@@ -136,9 +180,9 @@ public class AirQualityData {
                 + "%16$s, %17$s, %18$s, %19$s, "
                 + "%20$s, %21$s, %22$s, %23$s, "
                 + "%24$s, %25$s, %26$s, %27$s, "
-                + "%28$s, %29$s, %30$s, %31$s", 
-                getSiteId(), getSiteName(), getItemId(), getItemName(), getItemEngName(), 
-                getItemUnit(), getMonitorDateStr(), 
+                + "%28$s, %29$s, %30$s, %31$s",
+                getSiteId(), getSiteName(), getItemId(), getItemName(), getItemEngName(),
+                getItemUnit(), getMonitorDateStr(),
                 monitorValue00, monitorValue01, monitorValue02, monitorValue03,
                 monitorValue04, monitorValue05, monitorValue06, monitorValue07,
                 monitorValue08, monitorValue09, monitorValue10, monitorValue11,
