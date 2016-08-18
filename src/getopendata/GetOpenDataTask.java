@@ -107,14 +107,7 @@ public class GetOpenDataTask implements Runnable {
             //建立紀錄檔
             LogUtils.log(logFileWriter, String.format("%1$s\tNow start writing data into file", TimestampUtils.getTimestampStr()));
 
-            File csvDataFile = new File(airQualityDataCsvFileName);
-
-            if (!csvDataFile.getParentFile().exists()) {
-                csvDataFile.getParentFile().mkdirs();
-            }
-            FileWriter csvFileWriter
-                    = Step.createFileWriter( airQualityDataCsvFileName,  false);
-
+            FileWriter csvFileWriter = Step.createFileWriter(airQualityDataCsvFileName, true);
             Step.writeFile(csvFileWriter, airQualityDataMap.values(), logFileWriter);
 
             //建立itemMap
