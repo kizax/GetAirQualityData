@@ -14,5 +14,5 @@ nbactions.xml
 /dbsetting
 
 *.csv
-!testdata\testdata.csv
+!testdata/testdata.csv
 

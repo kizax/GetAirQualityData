@@ -17,31 +17,13 @@ public class Main {
         } catch (ArrayIndexOutOfBoundsException e) {
         }
 
-        String historyCsvFileName = folderPath + "/record/airQualityDataHistory.csv";
+        String historyCsvFileName = folderPath + "/history/airQualityDataHistory.csv";
         String airQualityDataCsvFileName = folderPath + "/record/airQualityData.csv";
         String filledUpAirQualityDataCsvFileName = folderPath + "/record/airQualityData_afterFillValue.csv";
         String logFileName = folderPath + "/record/log.txt";
 
         //建立log file
-        File logFile = new File(logFileName);
-
-        if (!logFile.getParentFile().exists()) {
-            logFile.getParentFile().mkdirs();
-        }
-
-        FileWriter logFileWriter = null;
-        try {
-            if (!logFile.exists()) {
-                logFile.createNewFile();
-                logFileWriter = new FileWriter(logFile, true);
-
-            } else {
-                logFileWriter = new FileWriter(logFile, true);
-            }
-        } catch (IOException ex) {
-            ex.printStackTrace();
-        }
-
+        FileWriter logFileWriter = Step.createFileWriter(logFileName, true);
         LogUtils.log(logFileWriter, String.format("%1$s\tStart air quality open data downloader!", TimestampUtils.getTimestampStr()));
 
         //建立itemIdMap

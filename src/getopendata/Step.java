@@ -296,11 +296,11 @@ public class Step {
         } catch (ArrayIndexOutOfBoundsException e) {
         } catch (NullPointerException e) {
         }
-        if (monitorValue == AirQualityRecordData.NOT_SET) {
+//        if (monitorValue == AirQualityRecordData.NOT_SET) {
 //            LogUtils.log(logFileWriter, String.format("%1$s\tLine %2$d air quality data %3$s / %4$s at %5$s %6$d o'clock doesn't have %7$s value",
 //                    TimestampUtils.getTimestampStr(), airQualityData.getLineNum(), airQualityData.getSiteName(),
 //                    airQualityData.getItemName(), airQualityData.getMonitorDateStr(), index, str));
-        }
+//        }
 
         return monitorValue;
     }
