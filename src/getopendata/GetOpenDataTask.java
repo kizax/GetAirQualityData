@@ -11,9 +11,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.text.DateFormat;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -102,8 +100,7 @@ public class GetOpenDataTask implements Runnable {
 
             //補上dummy值
             Step.fillWithDummyData(airQualityDataMap, siteMap, itemIdMap, specificDate, logFileWriter);
-            
-           
+
             //清除錯誤值
             Step.clearAllErrorValue(siteMap, itemIdMap, airQualityDataMap);
 
@@ -118,7 +115,7 @@ public class GetOpenDataTask implements Runnable {
             FileWriter csvFileWriter
                     = new FileWriter(csvDataFile, true);
 
-            Step.writeFile(csvFileWriter,airQualityDataMap.values(), logFileWriter);
+            Step.writeFile(csvFileWriter, airQualityDataMap.values(), logFileWriter);
 
             //建立itemMap
             Map<String, Integer> itemMap = MapUtils.getItemMap();
@@ -187,7 +184,6 @@ public class GetOpenDataTask implements Runnable {
 
     }
 
-
     private String getStrFromResponse(HttpResponse response) throws IOException {
         InputStream inputStream = response.getEntity().getContent();
 
@@ -223,7 +219,6 @@ public class GetOpenDataTask implements Runnable {
         return str.substring(0, pos);
     }
 
-  
     private void addList(ArrayList<AirQualityRecordData> destAirQualityDataList, ArrayList<AirQualityRecordData> srcAirQualityDataList) {
         for (AirQualityRecordData airQualityRecordData : srcAirQualityDataList) {
             destAirQualityDataList.add(airQualityRecordData);

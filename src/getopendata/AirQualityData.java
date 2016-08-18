@@ -73,76 +73,148 @@ public class AirQualityData {
 
             if (monitorValue00.contains(NR)) {
                 this.monitorValue00 = ZERO;
+            } else {
+                this.monitorValue00 = monitorValue00;
             }
+            
             if (monitorValue01.contains(NR)) {
                 this.monitorValue01 = ZERO;
+            } else {
+                this.monitorValue01 = monitorValue01;
             }
+            
             if (monitorValue02.contains(NR)) {
                 this.monitorValue02 = ZERO;
+            } else {
+                this.monitorValue02 = monitorValue02;
             }
+            
             if (monitorValue03.contains(NR)) {
                 this.monitorValue03 = ZERO;
+            } else {
+                this.monitorValue03 = monitorValue03;
             }
+            
             if (monitorValue04.contains(NR)) {
                 this.monitorValue04 = ZERO;
+            } else {
+                this.monitorValue04 = monitorValue04;
             }
+            
             if (monitorValue05.contains(NR)) {
                 this.monitorValue05 = ZERO;
+            } else {
+                this.monitorValue05 = monitorValue05;
             }
+            
             if (monitorValue06.contains(NR)) {
                 this.monitorValue06 = ZERO;
+            } else {
+                this.monitorValue06 = monitorValue06;
             }
+            
             if (monitorValue07.contains(NR)) {
                 this.monitorValue07 = ZERO;
+            } else {
+                this.monitorValue07 = monitorValue07;
             }
+            
             if (monitorValue08.contains(NR)) {
                 this.monitorValue08 = ZERO;
+            } else {
+                this.monitorValue08 = monitorValue08;
             }
+            
             if (monitorValue09.contains(NR)) {
                 this.monitorValue09 = ZERO;
+            } else {
+                this.monitorValue09 = monitorValue09;
             }
+            
             if (monitorValue10.contains(NR)) {
                 this.monitorValue10 = ZERO;
+            } else {
+                this.monitorValue10 = monitorValue10;
             }
+            
             if (monitorValue11.contains(NR)) {
                 this.monitorValue11 = ZERO;
+            } else {
+                this.monitorValue11 = monitorValue11;
             }
+            
             if (monitorValue12.contains(NR)) {
                 this.monitorValue12 = ZERO;
+            } else {
+                this.monitorValue12 = monitorValue12;
             }
+            
             if (monitorValue13.contains(NR)) {
                 this.monitorValue13 = ZERO;
+            } else {
+                this.monitorValue13 = monitorValue13;
             }
+            
             if (monitorValue14.contains(NR)) {
                 this.monitorValue14 = ZERO;
+            } else {
+                this.monitorValue14 = monitorValue14;
             }
+            
             if (monitorValue15.contains(NR)) {
                 this.monitorValue15 = ZERO;
+            } else {
+                this.monitorValue15 = monitorValue15;
             }
+            
             if (monitorValue16.contains(NR)) {
                 this.monitorValue16 = ZERO;
+            } else {
+                this.monitorValue16 = monitorValue16;
             }
+            
             if (monitorValue17.contains(NR)) {
                 this.monitorValue17 = ZERO;
+            } else {
+                this.monitorValue17 = monitorValue17;
             }
+            
             if (monitorValue18.contains(NR)) {
                 this.monitorValue18 = ZERO;
+            } else {
+                this.monitorValue18 = monitorValue18;
             }
+            
             if (monitorValue19.contains(NR)) {
                 this.monitorValue19 = ZERO;
+            } else {
+                this.monitorValue19 = monitorValue19;
             }
+            
             if (monitorValue20.contains(NR)) {
                 this.monitorValue20 = ZERO;
+            } else {
+                this.monitorValue20 = monitorValue20;
             }
+            
             if (monitorValue21.contains(NR)) {
                 this.monitorValue21 = ZERO;
+            } else {
+                this.monitorValue21 = monitorValue21;
             }
+            
             if (monitorValue22.contains(NR)) {
                 this.monitorValue22 = ZERO;
+            } else {
+                this.monitorValue22 = monitorValue22;
             }
+            
             if (monitorValue23.contains(NR)) {
                 this.monitorValue23 = ZERO;
+            } else {
+                this.monitorValue23 = monitorValue23;
             }
+            
             return;
 
         }
