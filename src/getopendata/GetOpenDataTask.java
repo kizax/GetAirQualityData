@@ -102,6 +102,7 @@ public class GetOpenDataTask implements Runnable {
             Step.fillWithDummyData(airQualityDataMap, siteMap, itemIdMap, specificDate, logFileWriter);
 
             //清除錯誤值
+            LogUtils.log(logFileWriter, String.format("%1$s\tNow start clearing error data", TimestampUtils.getTimestampStr()));
             Step.clearAllErrorValue(siteMap, itemIdMap, airQualityDataMap);
 
             //建立紀錄檔
@@ -152,7 +153,7 @@ public class GetOpenDataTask implements Runnable {
 
             //將補完值的新資料附加到已經補過缺漏值的資料的最後面
             LogUtils.log(logFileWriter, String.format("%1$s\tNow start writing data into file", TimestampUtils.getTimestampStr()));
-            FileWriter csvResultFileWriter = Step.createFileWriter(filledUpAirQualityDataCsvFileName, false);
+            FileWriter csvResultFileWriter = Step.createFileWriter(filledUpAirQualityDataCsvFileName, true);
 
             //寫檔
             Step.writeFile(csvResultFileWriter, newAirQualityDataList, logFileWriter);
