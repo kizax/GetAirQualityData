@@ -113,34 +113,33 @@ public class GetOpenDataTask implements Runnable {
             //建立itemMap
             Map<String, Integer> itemMap = MapUtils.getItemMap();
 
-            ArrayList<AirQualityRecordData> airQualityRecordDataList = new ArrayList();
+            ArrayList<AirQualityRecordData> referenceAirQualityRecordDataList = new ArrayList();
 
             //讀歷年資料檔        
             ArrayList<AirQualityRecordData> historyAirQualityDataList = Step.readFile(historyCsvFileName, logFileWriter);
-            addList(airQualityRecordDataList, historyAirQualityDataList);
+            addList(referenceAirQualityRecordDataList, historyAirQualityDataList);
 
             //讀已經補過缺漏值的資料
             ArrayList<AirQualityRecordData> recentAirQualityDataList = Step.readFile(filledUpAirQualityDataCsvFileName, logFileWriter);
-            addList(airQualityRecordDataList, recentAirQualityDataList);
+            addList(referenceAirQualityRecordDataList, recentAirQualityDataList);
+
+            //對參考資料建立hashMap<String,AirQualityData>   測站 日期 測項 -> airQualityData
+            Map<String, AirQualityRecordData> referenceAirQualityRecordDataMap = Step.generateAirQualityDataMap(referenceAirQualityRecordDataList, logFileWriter);
 
             //新抓的資料轉成AirQualityRecordData格式
             ArrayList<AirQualityRecordData> newAirQualityDataList = new ArrayList();
             for (AirQualityData airQualityData : airQualityDataMap.values()) {
                 newAirQualityDataList.add(new AirQualityRecordData(airQualityData.getRecordStr()));
             }
-            addList(airQualityRecordDataList, newAirQualityDataList);
 
-            //建立hashMap<String,AirQualityData>   測站 日期 測項 -> airQualityData
-            Map<String, AirQualityRecordData> airQualityRecordDataMap = Step.generateAirQualityDataMap(airQualityRecordDataList, logFileWriter);
-
-            //開始補值
+            //開始對新抓的資料補值
             int numOfNotFilledValueLastTime = Integer.MAX_VALUE;
             int numOfNotFilledValue;
             int roundCount = 0;
             while (true) {
                 roundCount++;
                 LogUtils.log(logFileWriter, String.format("%1$s\tStart filling data, round %2$d", TimestampUtils.getTimestampStr(), roundCount));
-                numOfNotFilledValue = Step.fillUpAirQualityData(airQualityRecordDataMap, airQualityRecordDataList, logFileWriter);
+                numOfNotFilledValue = Step.fillUpAirQualityData(referenceAirQualityRecordDataMap, newAirQualityDataList, logFileWriter);
                 LogUtils.log(logFileWriter, String.format("%1$s\tRound %2$d still have %3$d not filled value", TimestampUtils.getTimestampStr(), roundCount, numOfNotFilledValue));
 
                 if (numOfNotFilledValue != numOfNotFilledValueLastTime) {
@@ -151,12 +150,12 @@ public class GetOpenDataTask implements Runnable {
                 }
             }
 
-            //建立紀錄檔
+            //將補完值的新資料附加到已經補過缺漏值的資料的最後面
             LogUtils.log(logFileWriter, String.format("%1$s\tNow start writing data into file", TimestampUtils.getTimestampStr()));
             FileWriter csvResultFileWriter = Step.createFileWriter(filledUpAirQualityDataCsvFileName, false);
 
             //寫檔
-            Step.writeFile(csvResultFileWriter, airQualityRecordDataList, logFileWriter);
+            Step.writeFile(csvResultFileWriter, newAirQualityDataList, logFileWriter);
 
         } catch (IOException ex) {
             Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
