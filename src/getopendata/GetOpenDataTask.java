@@ -113,7 +113,7 @@ public class GetOpenDataTask implements Runnable {
                 csvDataFile.getParentFile().mkdirs();
             }
             FileWriter csvFileWriter
-                    = new FileWriter(csvDataFile, true);
+                    = Step.createFileWriter( airQualityDataCsvFileName,  false);
 
             Step.writeFile(csvFileWriter, airQualityDataMap.values(), logFileWriter);
 
